@@ -20,17 +20,21 @@ namespace PubSubServer
             _producterService.StartService();
             _subscriberService = new MyMq.TcpSubscriberService();
             _subscriberService.StartService();
-            //new MyMq.ProducerSocketService().StartService();
-            //new MyMq.SocketSubscriberService().StartService();
+
         }
 
+        private int _messageCount = 1;
         void ProducerTcpService_ReceiveMessageEventHandler(object message)
         {
             if (this.richTextBox1.InvokeRequired)
             {
                 richTextBox1.Invoke(
                     new MethodInvoker(
-                        delegate() { this.richTextBox1.AppendText(string.Format("{0}\r\n", message.ToString())); }));
+                        delegate()
+                        {
+                            this.richTextBox1.AppendText(string.Format("第{1}条数据:{0}\r\n", message.ToString(),
+                                                                       _messageCount++));
+                        }));
 
 
             }
@@ -39,6 +43,12 @@ namespace PubSubServer
         private void Server_Load(object sender, System.EventArgs e)
         {
 
+        }
+
+        private void clearBtn_Click(object sender, System.EventArgs e)
+        {
+            this._messageCount = 1;
+            this.richTextBox1.Clear();
         }
     }
 }

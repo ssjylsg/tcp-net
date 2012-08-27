@@ -97,6 +97,7 @@
             // 
             // btnClearAstaListView
             // 
+            this.btnClearAstaListView.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnClearAstaListView.Location = new System.Drawing.Point(322, 269);
             this.btnClearAstaListView.Name = "btnClearAstaListView";
             this.btnClearAstaListView.Size = new System.Drawing.Size(68, 21);
@@ -107,6 +108,9 @@
             // 
             // richTextBox1
             // 
+            this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.richTextBox1.Location = new System.Drawing.Point(29, 85);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.Size = new System.Drawing.Size(409, 178);
@@ -115,6 +119,7 @@
             // 
             // sendBtn
             // 
+            this.sendBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.sendBtn.Location = new System.Drawing.Point(530, 269);
             this.sendBtn.Name = "sendBtn";
             this.sendBtn.Size = new System.Drawing.Size(75, 23);
@@ -125,6 +130,9 @@
             // 
             // sendInfoRtb
             // 
+            this.sendInfoRtb.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.sendInfoRtb.Location = new System.Drawing.Point(456, 85);
             this.sendInfoRtb.Name = "sendInfoRtb";
             this.sendInfoRtb.Size = new System.Drawing.Size(231, 178);
@@ -133,6 +141,7 @@
             // 
             // sendFileBtn
             // 
+            this.sendFileBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.sendFileBtn.Location = new System.Drawing.Point(274, 319);
             this.sendFileBtn.Name = "sendFileBtn";
             this.sendFileBtn.Size = new System.Drawing.Size(75, 23);
@@ -143,6 +152,7 @@
             // 
             // TcpBtn
             // 
+            this.TcpBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.TcpBtn.Location = new System.Drawing.Point(29, 319);
             this.TcpBtn.Name = "TcpBtn";
             this.TcpBtn.Size = new System.Drawing.Size(127, 23);
@@ -153,6 +163,7 @@
             // 
             // socketrbtn
             // 
+            this.socketrbtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.socketrbtn.AutoSize = true;
             this.socketrbtn.Location = new System.Drawing.Point(162, 322);
             this.socketrbtn.Name = "socketrbtn";
@@ -164,6 +175,7 @@
             // 
             // tcprbtn
             // 
+            this.tcprbtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.tcprbtn.AutoSize = true;
             this.tcprbtn.Location = new System.Drawing.Point(227, 324);
             this.tcprbtn.Name = "tcprbtn";
@@ -175,6 +187,7 @@
             // 
             // autoSendBtn
             // 
+            this.autoSendBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.autoSendBtn.Location = new System.Drawing.Point(372, 319);
             this.autoSendBtn.Name = "autoSendBtn";
             this.autoSendBtn.Size = new System.Drawing.Size(75, 23);
@@ -185,6 +198,7 @@
             // 
             // sendTxt
             // 
+            this.sendTxt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.sendTxt.Location = new System.Drawing.Point(456, 323);
             this.sendTxt.Name = "sendTxt";
             this.sendTxt.Size = new System.Drawing.Size(100, 21);
@@ -192,6 +206,7 @@
             // 
             // isServiceCkb
             // 
+            this.isServiceCkb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.isServiceCkb.AutoSize = true;
             this.isServiceCkb.Location = new System.Drawing.Point(29, 276);
             this.isServiceCkb.Name = "isServiceCkb";
@@ -202,6 +217,7 @@
             // 
             // watchInfoLbl
             // 
+            this.watchInfoLbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.watchInfoLbl.AutoSize = true;
             this.watchInfoLbl.Location = new System.Drawing.Point(573, 324);
             this.watchInfoLbl.Name = "watchInfoLbl";
