@@ -18,8 +18,8 @@ namespace SocketSubscriber
     public partial class Subscriber : Form
     {
         Boolean _isReceivingStarted = false;
-        private MyMq.ISubscribercs _subscriber;
-        private MyMq.IProduct _product;
+        private ISubscribercs _subscriber;
+        private IProduct _product;
         private string serverIP;
         private int serverPort;
         private IService _producterService;
@@ -53,15 +53,15 @@ namespace SocketSubscriber
         {
             if (this.isServiceCkb.Checked)
             {
-                _producterService = new MyMq.ProducerSocketService();
+                _producterService = new ProducerSocketService();
                 _producterService.StartService();
-                _subscriberService = new MyMq.SocketSubscriberService();
+                _subscriberService = new SocketSubscriberService();
                 _subscriberService.StartService();
             }
 
             serverPort = Convert.ToInt32(ConfigurationSettings.AppSettings["ServerPort"]);
             _subscriber = new MyMq.SocketSubscriber(serverIP, serverPort, new TimeSpan(0, 0, 0, 0, 50));
-            _subscriber.OnReceiveMessageEventHandler += new MyMq.ReceiveMessageEventHandler(_subscriber_OnReceiveMessageEventHandler);
+            _subscriber.OnReceiveMessageEventHandler += new ReceiveMessageEventHandler(_subscriber_OnReceiveMessageEventHandler);
 
             _product = new SocketProduct();
             _product.Init(serverIP, 10002);
@@ -70,17 +70,17 @@ namespace SocketSubscriber
         {
             if (this.isServiceCkb.Checked)
             {
-                _producterService = new MyMq.ProducerTcpService();
+                _producterService = new ProducerTcpService();
                 _producterService.StartService();
-                _subscriberService = new MyMq.TcpSubscriberService();
+                _subscriberService = new TcpSubscriberService();
                 _subscriberService.StartService();
             }
 
             serverPort = Convert.ToInt32(ConfigurationSettings.AppSettings["ServerPort"]);
-            _subscriber = new MyMq.TcpSubscribercs(serverIP, serverPort, new TimeSpan(0, 0, 0, 0, 50));
-            _subscriber.OnReceiveMessageEventHandler += new MyMq.ReceiveMessageEventHandler(_subscriber_OnReceiveMessageEventHandler);
+            _subscriber = new TcpSubscribercs(serverIP, serverPort, new TimeSpan(0, 0, 0, 0, 50));
+            _subscriber.OnReceiveMessageEventHandler += new ReceiveMessageEventHandler(_subscriber_OnReceiveMessageEventHandler);
 
-            _product = new MyMq.TcpProduct();
+            _product = new TcpProduct();
             _product.Init(serverIP, 10002);
         }
         void _subscriber_OnReceiveMessageEventHandler(object obj)
@@ -214,7 +214,7 @@ namespace SocketSubscriber
                 using (FileStream stream = new FileStream(openFile.FileName, FileMode.Open))
                 {
                     byte[] buffer = new byte[stream.Length];
-                    stream.Read(buffer, 0, buffer.Length); 
+                    stream.Read(buffer, 0, buffer.Length);
                     this.Send(buffer);
                 }
             }
@@ -332,14 +332,17 @@ namespace SocketSubscriber
                 {
                     if (stream.CanRead)
                     {
-                        int i;
-                        byte[] bytes = new byte[1024];
-                        List<byte> list = new List<byte>();
-                        while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
+
+                        byte[] bytes = new byte[client.ReceiveBufferSize];
+
+                        int readCount = stream.Read(bytes, 0, bytes.Length);
+                        if (readCount >= 0)
                         {
-                            list.AddRange(bytes);
+                            byte[] receiveBytes = new byte[readCount];
+                            Array.Resize(ref receiveBytes, readCount);
+                            OnOnReceiveMessageEventHandler(receiveBytes);
                         }
-                        OnOnReceiveMessageEventHandler(list.ToArray());
+
                     }
                 }
             }

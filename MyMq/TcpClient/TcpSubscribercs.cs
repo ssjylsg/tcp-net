@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using MyMq.Excepions;
 
 namespace MyMq
 {
@@ -9,9 +10,6 @@ namespace MyMq
     {
         private TcpClient _client;
         private IPEndPoint _remoteEndPoint;
-        private byte[] _data;
-        private int _recv;
-        private TimeSpan _sleepTimeSpan;
         private Boolean _isReceivingStarted = false;
         private object _objectLock = new object();
 
@@ -49,7 +47,15 @@ namespace MyMq
         /// <param name="sleepTimeSpan"></param>
         public TcpSubscribercs(string serverIp, int serverPort, TimeSpan sleepTimeSpan)
         {
-            this._sleepTimeSpan = sleepTimeSpan;
+            if (string.IsNullOrEmpty(serverIp))
+            {
+                throw  new SubscriberException("订阅ServerIP 不能为空");
+            }
+            if (serverPort == 0)
+            {
+                throw new SubscriberException("订阅Server Port 不正确");
+            }
+
             IPAddress serverIPAddress = IPAddress.Parse(serverIp);
             _remoteEndPoint = new IPEndPoint(serverIPAddress, serverPort);
             _client = new TcpClient();
@@ -68,7 +74,6 @@ namespace MyMq
             if (_isReceivingStarted == false)
             {
                 _isReceivingStarted = true;
-                _data = new byte[1024];
                 Thread thread1 = new Thread(new ThreadStart(ReceiveDataFromServer));
                 thread1.IsBackground = true;
                 thread1.Start();
@@ -88,9 +93,7 @@ namespace MyMq
                                                                                              }
                                                                                          };
             asynService.PickMessage();
-
-
-
+            #region 同步
             //while (_isReceivingStarted)
             //{
             //    try
@@ -109,6 +112,7 @@ namespace MyMq
             //    }
             //    //Thread.Sleep(50);
             //}
+            #endregion
         }
         /// <summary>
         /// 取消订阅主题

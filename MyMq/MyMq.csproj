@@ -65,19 +65,30 @@
     <Compile Include="PackService\NetPacketTcpAsynService.cs" />
     <Compile Include="PackService\NetPacketTcpService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource.resx</DependentUpon>
+    </Compile>
     <Compile Include="Socket\SocketProduct.cs" />
     <Compile Include="Socket\ProducerSocketService.cs" />
     <Compile Include="Socket\SocketSubscriber.cs" />
     <Compile Include="Socket\SocketSubscriberService.cs" />
+    <Compile Include="SystemConfig.cs" />
     <Compile Include="TcpClient\ProducerTcpService.cs" />
     <Compile Include="TcpClient\TcpProduct.cs" />
     <Compile Include="TcpClient\TcpSubscribercs.cs" />
     <Compile Include="TcpClient\TcpSubscriberService.cs" />
     <Compile Include="WorkerThreadParameters.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <None Include="log4net.config" />
+    <EmbeddedResource Include="Resource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Log\log4net.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

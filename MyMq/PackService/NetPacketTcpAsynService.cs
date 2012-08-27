@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace MyMq
 {
@@ -128,7 +126,7 @@ namespace MyMq
 
             #region【将内存流一次写入网络流,异步写入】
             mStream.Seek(0, SeekOrigin.Begin);
-            _netStream.BeginWrite(mStream.GetBuffer(), 0, (Int32)mStream.Length, new AsyncCallback(AsyncCallbackWriteToNetStream), new WriteNetStreamASyncCallbackParam { netStream = _netStream, packetHead = packet.PacketHead });
+            _netStream.BeginWrite(mStream.GetBuffer(), 0, (Int32)mStream.Length, new AsyncCallback(AsyncCallbackWriteToNetStream), new WriteNetStreamASyncCallbackParam { NetStream = _netStream, PacketHead = packet.PacketHead });
             mStream.Close();
             #endregion
         }
@@ -142,7 +140,7 @@ namespace MyMq
             WriteNetStreamASyncCallbackParam p = (WriteNetStreamASyncCallbackParam)result.AsyncState;
             try
             {
-                p.netStream.EndWrite(result);
+                p.NetStream.EndWrite(result);
             }
             catch (Exception e)
             {
@@ -150,7 +148,7 @@ namespace MyMq
             }
 
             if (OnAfterSendPacket != null) 
-                OnAfterSendPacket(p.packetHead);
+                OnAfterSendPacket(p.PacketHead);
         }
     }
 
@@ -162,10 +160,10 @@ namespace MyMq
         /// <summary>
         /// 网络流
         /// </summary>
-        internal NetworkStream netStream;
+        internal NetworkStream NetStream;
         /// <summary>
         /// 包头
         /// </summary>
-        internal NetPacketHead packetHead;
+        internal NetPacketHead PacketHead;
     }
 }

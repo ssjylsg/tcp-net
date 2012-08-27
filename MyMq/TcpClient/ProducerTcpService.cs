@@ -67,7 +67,7 @@ namespace MyMq
         private void HostPublisherService()
         {
             IPAddress ipV4 = NetHelper.GetLocalMachineIP();
-            IPEndPoint localEP = new IPEndPoint(ipV4, 10002);
+            IPEndPoint localEP = new IPEndPoint(ipV4, SystemConfig.PublishServerPort);
             TcpListener tcpListener = new TcpListener(localEP);
             tcpListener.Start();
             StartListening(tcpListener);

@@ -36,7 +36,7 @@ namespace MyMq
         private void HostSubscriberService()
         {
             IPAddress ipV4 = NetHelper.GetLocalMachineIP();
-            IPEndPoint localEP = new IPEndPoint(ipV4, 10001);
+            IPEndPoint localEP = new IPEndPoint(ipV4, SystemConfig.SubscriberServerPort);
             _server = new TcpListener(localEP);
             _server.Start();
             StartListening(_server);

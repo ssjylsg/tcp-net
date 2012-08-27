@@ -14,9 +14,8 @@ namespace MyMq
     {
         /// <summary>
         /// Tcp传输调用该构造方法
-        /// </summary>
-        /// <param name="netStream"></param>
-        public NetPacketService(NetworkStream netStream)
+        /// </summary> 
+        protected NetPacketService(NetworkStream netStream)
         {
             this._netStream = netStream;
             this._protocolType = System.Net.Sockets.ProtocolType.Tcp;
@@ -24,9 +23,8 @@ namespace MyMq
 
         /// <summary>
         /// Tcp传输调用该构造方法
-        /// </summary>
-        /// <param name="netStream"></param>
-        public NetPacketService(Socket tcpSocket)
+        /// </summary> 
+        protected NetPacketService(Socket tcpSocket)
         {
             this._tcpSocket = tcpSocket;
             this._netStream = new NetworkStream(this._tcpSocket);
@@ -34,9 +32,6 @@ namespace MyMq
         }
         /// <summary>
         /// 提取一个完整网络包然后返回[Tcp收包和Udp收包的行为不同,故转到子类实现]
-        ///     如果收到的包是STRING类型,NetPacket.Data是发送的字符串
-        ///     如果收到的包是BINARY类型,NetPacket.Data是发送的文件名长度+文件名+文件内容,请调用ParseFile函数进行解析
-        ///     如果收到的包是COMPLEX类型,NetPacket.Data是发序列化的对象，可以直接转型使用
         /// </summary>
         /// <returns></returns>
         public abstract NetPacket PickMessage();
@@ -129,7 +124,7 @@ namespace MyMq
         /// <summary>
         /// 网络流
         /// </summary>
-        protected System.Net.Sockets.NetworkStream _netStream = null;
+        protected  NetworkStream _netStream = null;
 
         /// <summary>
         /// 缓冲区
@@ -143,9 +138,9 @@ namespace MyMq
         /// <summary>
         /// Udp发送的目标端点
         /// </summary>
-        protected System.Net.EndPoint _udpRemoteEndPoint;
+        protected EndPoint _udpRemoteEndPoint;
 
-        public System.Net.EndPoint UdpRemoteEndPoint
+        public EndPoint UdpRemoteEndPoint
         {
             get { return _udpRemoteEndPoint; }
             set { _udpRemoteEndPoint = value; }
@@ -253,22 +248,11 @@ namespace MyMq
             #endregion
 
             return packet;
-        }
-
-        //public void SendMessage(NetPacket data)
-        //{
-        //    SendPacket(data);
-        //}
-
+        } 
         public void SendMessage(NetPacket data, NetworkStream networkStream)
         {
             this._netStream = networkStream;
             this.SendMessage(data);
-        }
-
-        //public NetPacket PickMessage()
-        //{
-        //    return ReceivePacket();
-        //}
+        } 
     }
 }
