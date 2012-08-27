@@ -10,6 +10,7 @@ namespace MyMq
     /// </summary>
     public class ProducerSocketService : IService
     {
+        private volatile bool _shouldStop;
         /// <summary>
         /// 启动发布服务
         /// </summary>
@@ -22,7 +23,7 @@ namespace MyMq
 
         public void Stop()
         {
-             
+            _shouldStop = true;
         }
 
         /// <summary>
@@ -35,17 +36,17 @@ namespace MyMq
             Socket server = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             server.Bind(localEP);
             StartListening(server);
-        } 
+        }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="server"></param>
-        private   void StartListening(Socket server)
+        private void StartListening(Socket server)
         {
             EndPoint remoteEP = new IPEndPoint(IPAddress.Any, 0);
             int recv = 0;
             byte[] data = new byte[1024];
-            while (true)
+            while (_shouldStop == false)
             {
                 try
                 {
@@ -92,6 +93,6 @@ namespace MyMq
                     server.SendTo(SerializeHelper.ObjectToBytes(message), SocketFlags.None, endPoint);
                 }
             }
-        } 
-    } 
+        }
+    }
 }

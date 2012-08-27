@@ -11,20 +11,21 @@ namespace MyMq
     internal class MessageStoreStore<T> : IService, IMessageStore<T> where T : class
     {
         delegate void MethodEventHandler(object message);
-        private Queue<T> _queue;
+        private Queue<T> _queueMessage;
+        private Queue<ErrorSendMessage<TcpClient>> _errorQueue;
         private object _lockObject = new object();
         private Thread _thread;
-        private ISendMessage<NetPacket> _sendMessageService;
+
         public MessageStoreStore()
         {
-
-            _queue = new Queue<T>();
+            _queueMessage = new Queue<T>();
+            _errorQueue = new Queue<ErrorSendMessage<TcpClient>>();
         }
 
         private void ExecuteThread()
         {
             T message;
-            while (true)
+            while (_shouldStop == false)
             {
                 message = this.GetNextMessage();
                 if (message != null)
@@ -36,6 +37,7 @@ namespace MyMq
                 Thread.Sleep(10);
             }
         }
+
         private void SendMessage(object message)
         {
             NetPacket packet = message as NetPacket;
@@ -56,23 +58,28 @@ namespace MyMq
                     {
                         if (stream.CanWrite)
                         {
-                            //ThreadPool.QueueUserWorkItem(new WaitCallback(delegate(object o)
-                            //                                                  {
-                            //                                                      StreamHelper.SendData(packet, stream);
-                            //                                                  }));
+                            
                             new NetPacketTcpAsynService(stream).SendMessage(packet);
                         }
                         else
                         {
+                            ErrorSendMessage<TcpClient> errorSendMessage = new ErrorSendMessage<TcpClient>();
+                            errorSendMessage.Packet = packet;
+                            errorSendMessage.TargetPoin = endPoint;
+
+                            _errorQueue.Enqueue(errorSendMessage);
                             LogManger.Warn("不能访问", this.GetType());
-                            System.Diagnostics.Trace.WriteLine("不能访问");
+
                         }
                     }
                 }
                 catch (Exception e)
                 {
+                    ErrorSendMessage<TcpClient> errorSendMessage = new ErrorSendMessage<TcpClient>();
+                    errorSendMessage.Packet = packet;
+                    errorSendMessage.TargetPoin = endPoint;
+                    _errorQueue.Enqueue(errorSendMessage);
                     LogManger.Error(e, this.GetType());
-                    System.Diagnostics.Trace.WriteLine(e + "出现错误");
                 }
             }
         }
@@ -80,9 +87,9 @@ namespace MyMq
         {
             lock (_lockObject)
             {
-                if (_queue.Count != 0)
+                if (_queueMessage.Count != 0)
                 {
-                    return _queue.Dequeue();
+                    return _queueMessage.Dequeue();
                 }
                 return null;
             }
@@ -91,9 +98,9 @@ namespace MyMq
         {
             lock (_lockObject)
             {
-                if (_queue.Count != 0)
+                if (_queueMessage.Count != 0)
                 {
-                    _queue.Dequeue();
+                    _queueMessage.Dequeue();
                 }
             }
         }
@@ -105,7 +112,7 @@ namespace MyMq
             }
             lock (_lockObject)
             {
-                _queue.Enqueue(message);
+                _queueMessage.Enqueue(message);
             }
         }
 
@@ -115,18 +122,18 @@ namespace MyMq
             _thread.IsBackground = true;
             _thread.Start();
         }
-
+        private volatile bool _shouldStop;
         public void Stop()
         {
-            _thread.Join();
-            lock (_thread)
+            _shouldStop = true;
+            lock (_lockObject)
             {
-                this._queue.Clear();
+                this._queueMessage.Clear();
             }
         }
     }
 
-    class  ErrorSendMessage<T>
+    class ErrorSendMessage<T>
     {
         private NetPacket _packet;
         private T _targetPoin;

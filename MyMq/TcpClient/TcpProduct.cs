@@ -5,7 +5,7 @@ namespace MyMq
 {
     public class TcpProduct : IProduct
     {
-        private TcpClient _client;
+      //  private TcpClient _client;
         private IPEndPoint _remoteEndPoint;
 
         private static readonly TcpProduct Product;
@@ -25,7 +25,7 @@ namespace MyMq
         public void Init(string serverIP, int serverPort)
         {
             IPAddress serverIPAddress = IPAddress.Parse(serverIP);
-            _client = new TcpClient();
+          //  _client = new TcpClient();
             _remoteEndPoint = new IPEndPoint(serverIPAddress, serverPort);
             // _client.Connect(_remoteEndPoint);
         }
@@ -42,12 +42,14 @@ namespace MyMq
             NetPacket packet = new NetPacket();
             packet.Command = command;
 
-            if (_client.Connected == false)
-            {
-                _client = new TcpClient();
-                _client.Connect(_remoteEndPoint);
-            }
-            NetworkStream stream = _client.GetStream();
+            //if (_client.Connected == false)
+            //{
+            //    _client = new TcpClient();
+            //    _client.Connect(_remoteEndPoint);
+            //}
+            TcpClient client = new TcpClient();
+            client.Connect(_remoteEndPoint);
+            NetworkStream stream = client.GetStream();
             //using (NetworkStream stream = _client.GetStream())
             {
                 if (stream.CanWrite)
@@ -55,7 +57,7 @@ namespace MyMq
                     NetPacketTcpAsynService asynService = new NetPacketTcpAsynService(stream);
                     asynService.OnAfterSendPacket += new TcpAsynHandler2(delegate(NetPacketHead h)
                                                                               {
-                                                                                  _client.Close();
+                                                                                  client.Close();
                                                                                   stream.Close();
                                                                               });
                     asynService.SendMessage(packet);

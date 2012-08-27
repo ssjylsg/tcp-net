@@ -11,7 +11,7 @@ namespace MyMq
     public class SocketSubscriberService : IService
     {
         private Thread _thread;
-        private bool _running;
+        private volatile bool _running;
         public void StartService()
         {
             Filter.SubscribersList.Clear();
@@ -23,7 +23,7 @@ namespace MyMq
         public void Stop()
         {
             this._running = false;
-            this._thread.Join();
+           
         }
         private void HostSubscriberService()
         {

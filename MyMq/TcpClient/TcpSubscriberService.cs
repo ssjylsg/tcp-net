@@ -11,6 +11,7 @@ namespace MyMq
     public class TcpSubscriberService : IService
     {
         private Thread _thread;
+        private volatile bool _shouldStop;
         public void StartService()
         {
             LogManger.Info("订阅服务开启", this.GetType());
@@ -23,7 +24,7 @@ namespace MyMq
         public void Stop()
         {
             _server.Stop();
-            _thread.Join();
+            _shouldStop = true;
         }
 
         public void ClearAllScriber()
@@ -133,12 +134,27 @@ namespace MyMq
             }
         }
 
-        private static void StartListening(TcpListener server)
+        private void StartListening(TcpListener server)
         {
+            if (_shouldStop)
+            {
+                return;
+            }
             server.BeginAcceptTcpClient(new AsyncCallback(delegate(IAsyncResult result)
                                                               {
-                                                                  TcpClient client = server.EndAcceptTcpClient(result);
-                                                                  ThreadPool.QueueUserWorkItem(ClientReceiveMessage, client);
+                                                                  TcpClient client = null;
+                                                                  try
+                                                                  {
+                                                                      client = server.EndAcceptTcpClient(result);
+                                                                  }
+                                                                  catch (Exception e)
+                                                                  {
+                                                                      LogManger.Error(e, this.GetType());
+                                                                  }
+                                                                  if (client != null)
+                                                                  {
+                                                                      ThreadPool.QueueUserWorkItem(ClientReceiveMessage, client);
+                                                                  }
 
                                                                   StartListening(server);
                                                               }), server);
