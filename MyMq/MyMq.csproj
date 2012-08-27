@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D0B3028C-56DA-4183-92FA-0A4CEB799233}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MyMq</RootNamespace>
+    <AssemblyName>MyMq</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\log4net.2.0.0\lib\net20-cf\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Command\Command.cs" />
+    <Compile Include="Command\ICommand.cs" />
+    <Compile Include="Command\NetPacket.cs" />
+    <Compile Include="Command\NetPacketHead.cs" />
+    <Compile Include="Command\PublishCommand.cs" />
+    <Compile Include="Command\SubscriberCommand.cs" />
+    <Compile Include="Command\UnSubscribeCommand.cs" />
+    <Compile Include="Excepions\MqException.cs" />
+    <Compile Include="Excepions\SubscriberException.cs" />
+    <Compile Include="Filter.cs" />
+    <Compile Include="Helper\NetHelper.cs" />
+    <Compile Include="Helper\SerializeHelper.cs" />
+    <Compile Include="Helper\StreamHelper.cs" />
+    <Compile Include="Implement\IMessageStore.cs" />
+    <Compile Include="Implement\IReceiveMessage.cs" />
+    <Compile Include="Implement\ISendMessage.cs" />
+    <Compile Include="Implement\ISerializeHelper.cs" />
+    <Compile Include="Implement\IService.cs" />
+    <Compile Include="Implement\ISubscribercs.cs" />
+    <Compile Include="Implement\IProduct.cs" />
+    <Compile Include="Log\LogManger.cs" />
+    <Compile Include="MessageStoreStore.cs" />
+    <Compile Include="PackService\NetPacketService.cs" />
+    <Compile Include="PackService\NetPacketTcpAsynService.cs" />
+    <Compile Include="PackService\NetPacketTcpService.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Socket\SocketProduct.cs" />
+    <Compile Include="Socket\ProducerSocketService.cs" />
+    <Compile Include="Socket\SocketSubscriber.cs" />
+    <Compile Include="Socket\SocketSubscriberService.cs" />
+    <Compile Include="TcpClient\ProducerTcpService.cs" />
+    <Compile Include="TcpClient\TcpProduct.cs" />
+    <Compile Include="TcpClient\TcpSubscribercs.cs" />
+    <Compile Include="TcpClient\TcpSubscriberService.cs" />
+    <Compile Include="WorkerThreadParameters.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="log4net.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
