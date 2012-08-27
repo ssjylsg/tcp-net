@@ -73,7 +73,9 @@ namespace MyMq
                 _recv = _client.ReceiveFrom(_data, ref publisherEndPoint);
                 if (_recv > 0)
                 {
-                    OnOnReceiveMessageEventHandler(_data);
+                    byte[] receiveData = new byte[_recv];
+                    Array.Resize(ref receiveData,_recv);
+                    OnOnReceiveMessageEventHandler(receiveData);
                 }
             }
         }

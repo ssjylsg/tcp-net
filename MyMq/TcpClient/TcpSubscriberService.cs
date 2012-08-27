@@ -26,6 +26,11 @@ namespace MyMq
             _thread.Join();
         }
 
+        public void ClearAllScriber()
+        {
+            TcpClientFilter.SubscribersList.Clear();
+        }
+
         private TcpListener _server;
         private void HostSubscriberService()
         {
@@ -43,87 +48,88 @@ namespace MyMq
             byte[] bytes;
             //while (true)
             //{
-                if (client.Connected == false)
-                {
-                    return;
-                }
-                NetworkStream stream = client.GetStream(); 
-                if (stream.CanRead)
-                {
+            if (client.Connected == false)
+            {
+                return;
+            }
+            NetworkStream stream = client.GetStream();
+            if (stream.CanRead)
+            {
 
-                    bytes = new byte[client.ReceiveBufferSize];
-                    stream.BeginRead(bytes, 0, bytes.Length, delegate(IAsyncResult result)
+                bytes = new byte[client.ReceiveBufferSize];
+                stream.BeginRead(bytes, 0, bytes.Length, delegate(IAsyncResult result)
+                                                             {
+                                                                 int readCount = 0;
+                                                                 try
                                                                  {
-                                                                     int readCount = 0;
-                                                                     try
+                                                                     readCount = stream.EndRead(result);
+                                                                 }
+                                                                 catch (Exception e)
+                                                                 {
+                                                                     LogManger.Error(e, typeof(TcpSubscribercs));
+                                                                 }
+                                                                 if (readCount > 0)
+                                                                 {
+                                                                     byte[] buffer = new byte[readCount];
+                                                                     Array.Copy(bytes, buffer, readCount);
+                                                                     bytes = null;
+                                                                     ThreadPool.QueueUserWorkItem(new WaitCallback(delegate(object obj)
                                                                      {
-                                                                         readCount = stream.EndRead(result);
-                                                                     }
-                                                                     catch (Exception e)
-                                                                     {
-                                                                         LogManger.Error(e,typeof(TcpSubscribercs));
-                                                                     }
-                                                                     if(readCount > 0)
-                                                                     {
-                                                                         byte[] buffer = new byte[readCount];
-                                                                         Array.Copy(bytes, buffer, readCount);
-                                                                         bytes = null;
-                                                                         ThreadPool.QueueUserWorkItem(new WaitCallback(delegate(object obj)
+                                                                         ICommand command = SerializeHelper.BytesToObject(buffer) as ICommand;
+                                                                         remoteEP = client.Client.RemoteEndPoint;
+                                                                         if (command != null)
                                                                          {
-                                                                             ICommand command = SerializeHelper.BytesToObject(buffer) as ICommand;
-                                                                             remoteEP = client.Client.RemoteEndPoint;
-                                                                             if (command != null)
+                                                                             switch (command.CommandName)
                                                                              {
-                                                                                 switch (command.CommandName)
-                                                                                 {
-                                                                                     case CommandFlags.Subscribe:
-                                                                                         Filter.Client = client;
-                                                                                         TcpClientFilter.AddSubscriber(command.TopicName, remoteEP, client);
-                                                                                         break;
-                                                                                     case CommandFlags.UnSubscribe:
-                                                                                         TcpClientFilter.RemoveSubscriber(command.TopicName, remoteEP);
-                                                                                         break;
-                                                                                     default:
-                                                                                         break;
-                                                                                 }
+                                                                                 case CommandFlags.Subscribe:
+                                                                                     //Filter.Client = client;
+                                                                                     TcpClientFilter.AddSubscriber(command.TopicName, remoteEP, client);
+                                                                                     break;
+                                                                                 case CommandFlags.UnSubscribe:
+                                                                                     TcpClientFilter.RemoveSubscriber(command.TopicName, remoteEP);
+                                                                                     break;
+                                                                                 default:
+                                                                                     LogManger.Warn("不支持的命令" + command.CommandName, typeof(TcpSubscriberService));
+                                                                                     break;
                                                                              }
-                                                                         }));
-                                                                     }
-                                                                     if(client.Connected)
-                                                                     {
-                                                                         ClientReceiveMessage(client);
-                                                                     }
-                                                                 }, client);
-            //        if (readCount == 0)
-            //        {
-            //            Thread.Sleep(50);
-            //            continue;
-            //        }
-            //        byte[] buffer = new byte[readCount];
-            //        Array.Copy(bytes, buffer, readCount);
-            //        bytes = null;
-            //        ThreadPool.QueueUserWorkItem(new WaitCallback(delegate(object obj)
-            //                                                          {
-            //                                                              ICommand command = SerializeHelper.BytesToObject(buffer) as ICommand;
-            //                                                              remoteEP = client.Client.RemoteEndPoint;
-            //                                                              if (command != null)
-            //                                                              {
-            //                                                                  switch (command.CommandName)
-            //                                                                  {
-            //                                                                      case CommandFlags.Subscribe:
-            //                                                                          Filter.Client = client;
-            //                                                                          TcpClientFilter.AddSubscriber(command.TopicName, remoteEP, client);
-            //                                                                          break;
-            //                                                                      case CommandFlags.UnSubscribe:
-            //                                                                          TcpClientFilter.RemoveSubscriber(command.TopicName, remoteEP);
-            //                                                                          break;
-            //                                                                      default:
-            //                                                                          break;
-            //                                                                  }
-            //                                                              }
-            //                                                          }));
-            //    }
-            //    Thread.Sleep(50);
+                                                                         }
+                                                                     }));
+                                                                 }
+                                                                 if (client.Connected)
+                                                                 {
+                                                                     ClientReceiveMessage(client);
+                                                                 }
+                                                             }, client);
+                //        if (readCount == 0)
+                //        {
+                //            Thread.Sleep(50);
+                //            continue;
+                //        }
+                //        byte[] buffer = new byte[readCount];
+                //        Array.Copy(bytes, buffer, readCount);
+                //        bytes = null;
+                //        ThreadPool.QueueUserWorkItem(new WaitCallback(delegate(object obj)
+                //                                                          {
+                //                                                              ICommand command = SerializeHelper.BytesToObject(buffer) as ICommand;
+                //                                                              remoteEP = client.Client.RemoteEndPoint;
+                //                                                              if (command != null)
+                //                                                              {
+                //                                                                  switch (command.CommandName)
+                //                                                                  {
+                //                                                                      case CommandFlags.Subscribe:
+                //                                                                          Filter.Client = client;
+                //                                                                          TcpClientFilter.AddSubscriber(command.TopicName, remoteEP, client);
+                //                                                                          break;
+                //                                                                      case CommandFlags.UnSubscribe:
+                //                                                                          TcpClientFilter.RemoveSubscriber(command.TopicName, remoteEP);
+                //                                                                          break;
+                //                                                                      default:
+                //                                                                          break;
+                //                                                                  }
+                //                                                              }
+                //                                                          }));
+                //    }
+                //    Thread.Sleep(50);
             }
         }
 
@@ -131,7 +137,7 @@ namespace MyMq
         {
             server.BeginAcceptTcpClient(new AsyncCallback(delegate(IAsyncResult result)
                                                               {
-                                                                  TcpClient client = server.EndAcceptTcpClient(result); 
+                                                                  TcpClient client = server.EndAcceptTcpClient(result);
                                                                   ThreadPool.QueueUserWorkItem(ClientReceiveMessage, client);
 
                                                                   StartListening(server);

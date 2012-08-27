@@ -17,12 +17,12 @@ namespace MyMq
         /// <summary>
         /// 发包前事件
         /// </summary>
-       internal event TcpAsynHandler1 OnBeforeSendPacket;
+        internal event TcpAsynHandler1 OnBeforeSendPacket;
 
         /// <summary>
         /// 发包后事件
         /// </summary>
-       internal event TcpAsynHandler2 OnAfterSendPacket;
+        internal event TcpAsynHandler2 OnAfterSendPacket;
 
         /// <summary>
         /// 收到网络封包后的事件
@@ -47,9 +47,11 @@ namespace MyMq
                 }
                 //return null;//提取到一个封包后应该及时返回
             }
-
-            //【缓冲区不满足一个完整封包大小则继续从网络流读取数据,异步读取】
-            _netStream.BeginRead(_tempBuffer, 0, BUFFER_SIZE, new AsyncCallback(AsyncCallbackReadFromNetStream), _netStream);
+            if (_netStream.CanRead)
+            {
+                //【缓冲区不满足一个完整封包大小则继续从网络流读取数据,异步读取】
+                _netStream.BeginRead(_tempBuffer, 0, BUFFER_SIZE, new AsyncCallback(AsyncCallbackReadFromNetStream), _netStream);
+            }
 
             return null;
         }
@@ -83,7 +85,7 @@ namespace MyMq
         }
 
         /// <summary>
-        /// 发包[发送Tcp包/发送Udp数据报]
+        /// 发包 
         /// </summary>
         /// <param name="packet"></param>
         public override void SendMessage(NetPacket packet)
@@ -94,7 +96,7 @@ namespace MyMq
             if (OnBeforeSendPacket != null)
                 OnBeforeSendPacket(packet);
 
-            MemoryStream mStream = new MemoryStream(); 
+            MemoryStream mStream = new MemoryStream();
             #region【计算包体长度】
             if (packet.PacketHead.Len == 0)
             {
@@ -103,8 +105,8 @@ namespace MyMq
 
             #endregion
 
-            #region【写入包头】 
-            mStream.Write(BitConverter.GetBytes(packet.PacketHead.Version), 0, Marshal.SizeOf(packet.PacketHead.Version)); 
+            #region【写入包头】
+            mStream.Write(BitConverter.GetBytes(packet.PacketHead.Version), 0, Marshal.SizeOf(packet.PacketHead.Version));
             mStream.Write(BitConverter.GetBytes((Int32)packet.PacketHead.PType), 0, sizeof(Int32));
             mStream.Write(BitConverter.GetBytes(packet.PacketHead.Len), 0, Marshal.SizeOf(packet.PacketHead.Len));
             #endregion
@@ -119,7 +121,7 @@ namespace MyMq
                 buffer = new byte[m.Length];
                 m.Read(buffer, 0, (Int32)m.Length);
             }
-          
+
             mStream.Write(buffer, 0, buffer.Length);
 
             #endregion
@@ -138,8 +140,16 @@ namespace MyMq
         private void AsyncCallbackWriteToNetStream(IAsyncResult result)
         {
             WriteNetStreamASyncCallbackParam p = (WriteNetStreamASyncCallbackParam)result.AsyncState;
-            p.netStream.EndWrite(result);
-            if (OnAfterSendPacket != null)//事件处理,如果注册了该事件,则执行回调函数
+            try
+            {
+                p.netStream.EndWrite(result);
+            }
+            catch (Exception e)
+            {
+                LogManger.Warn(e, this.GetType());
+            }
+
+            if (OnAfterSendPacket != null) 
                 OnAfterSendPacket(p.packetHead);
         }
     }

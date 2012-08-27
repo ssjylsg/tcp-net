@@ -31,14 +31,23 @@ namespace SocketSubscriber
 
             txtTopicName.Text = "Bangladesh";
             sendInfoRtb.Text = DateTime.Now.ToString();
+            this.Closed += new EventHandler(Subscriber_Closed);
+        }
 
-            //NetPacketHead netPacket = new MyMq.NetPacketHead();
-            //netPacket.Len = 77890;
-            //netPacket.Version = 12;
-
-            //int length = ObjectToBytes(netPacket).Length;
-            //Console.WriteLine(length);
-
+        void Subscriber_Closed(object sender, EventArgs e)
+        {
+            if (this._subscriber != null)
+            {
+                this._subscriber.UnSubscribe(this.txtTopicName.Text);
+            }
+            if (this._producterService != null)
+            {
+                this._producterService.Stop();
+            }
+            if (this._subscriberService != null)
+            {
+                this._subscriberService.Stop();
+            }
         }
         private void InitSocket()
         {

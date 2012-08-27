@@ -17,7 +17,7 @@ namespace MyMq
         private ISendMessage<NetPacket> _sendMessageService;
         public MessageStoreStore()
         {
-            
+
             _queue = new Queue<T>();
         }
 
@@ -123,6 +123,28 @@ namespace MyMq
             {
                 this._queue.Clear();
             }
+        }
+    }
+
+    class  ErrorSendMessage<T>
+    {
+        private NetPacket _packet;
+        private T _targetPoin;
+        /// <summary>
+        /// 消息目的地
+        /// </summary>
+        public T TargetPoin
+        {
+            get { return _targetPoin; }
+            set { _targetPoin = value; }
+        }
+        /// <summary>
+        /// 消息
+        /// </summary>
+        public NetPacket Packet
+        {
+            get { return _packet; }
+            set { _packet = value; }
         }
     }
 }

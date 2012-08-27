@@ -49,7 +49,51 @@ namespace MyMq
         {
             return Activator.CreateInstance<T>();
         }
-
+        /// <summary>
+        /// 判断NetStream 是否可读
+        /// </summary>
+        public bool IsNetStreamCanRead
+        {
+            get
+            {
+                if (this._netStream == null)
+                {
+                    return true;
+                }
+                try
+                {
+                    return _netStream.CanRead;
+                }
+                catch (Exception e) 
+                {
+                    LogManger.Error(e,this.GetType());
+                    return false;
+                }
+               
+            }
+        }
+        /// <summary>
+        /// 判断NetStream 是否可读
+        /// </summary>
+        public bool IsNetStreamCanWrite
+        {
+            get
+            {
+                if (this._netStream == null)
+                {
+                    return true;
+                }
+                try
+                {
+                    return _netStream.CanWrite;
+                }
+                catch (Exception e)
+                {
+                    LogManger.Error(e, this.GetType());
+                    return false;
+                }
+            }
+        }
         /// <summary>
         /// 缓冲区大小1024字节
         /// </summary>

@@ -94,7 +94,7 @@ namespace MyMq
     /// </summary>
     internal class Filter
     {
-        public static TcpClient Client;
+      //  public static TcpClient Client;
         /// <summary>
         /// 订阅者数据字典
         /// </summary>
@@ -127,7 +127,7 @@ namespace MyMq
         {
             lock (_lockObject)
             {
-                return SubscribersList.ContainsKey(topicName) ? SubscribersList[topicName] : null;
+                return SubscribersList.ContainsKey(topicName) ? SubscribersList[topicName] : new List<EndPoint>();
             }
         }
         /// <summary>
@@ -220,7 +220,14 @@ namespace MyMq
                 return new List<TcpClient>();
             }
         }
-        private static bool Find(List<TcpClientEndPoint> list, EndPoint sPoint,out TcpClientEndPoint findPoint)
+        /// <summary>
+        /// 查找相同的EndPoint 的TcpClient
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="sPoint"></param>
+        /// <param name="findPoint"></param>
+        /// <returns></returns>
+        private static bool FindFirstSameEndPoint(List<TcpClientEndPoint> list, EndPoint sPoint,out TcpClientEndPoint findPoint)
         {
             foreach (TcpClientEndPoint tcpClientEndPoint in list)
             {
@@ -248,7 +255,7 @@ namespace MyMq
                 if (SubscribersList.ContainsKey(topicName))
                 {
                     TcpClientEndPoint findPoint;
-                    if (Find(SubscribersList[topicName], subscriberEndPoint, out findPoint))
+                    if (FindFirstSameEndPoint(SubscribersList[topicName], subscriberEndPoint, out findPoint))
                     {
                         if (findPoint.Client.Connected == false)
                         {
@@ -277,7 +284,7 @@ namespace MyMq
                 if (SubscribersList.ContainsKey(topicName))
                 {
                     TcpClientEndPoint point;
-                    if (Find(SubscribersList[topicName], subscriberEndPoint, out point))
+                    if (FindFirstSameEndPoint(SubscribersList[topicName], subscriberEndPoint, out point))
                     {
                         SubscribersList[topicName].Remove(point);
                     }

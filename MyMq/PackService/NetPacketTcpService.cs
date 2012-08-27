@@ -26,7 +26,10 @@ namespace MyMq
                     var packet = PickNetPacket();
                     return packet;
                 }
-
+                if (this.IsNetStreamCanRead == false) // 网络流关闭直接返回
+                {
+                    return null;
+                }
                 #region 【缓冲区不满足一个完整封包大小则继续从网络流读取数据】
                 int readLen = _netStream.Read(_tempBuffer, 0, BUFFER_SIZE);
                 //判断读取的字节数+缓冲区已有字节数是否超过缓冲区总大小
@@ -55,25 +58,30 @@ namespace MyMq
             if (packet == null || packet.Command == null || packet.PacketHead == null)
                 return;
 
-            #region【计算包体长度】 
-            packet.PacketHead.Len = GetCanSerializableObjectSize(packet.Command); 
+            #region【计算包体长度】
+            packet.PacketHead.Len = GetCanSerializableObjectSize(packet.Command);
             #endregion
 
             #region【写入包头】
-            _netStream.Write(BitConverter.GetBytes(packet.PacketHead.Version), 0, Marshal.SizeOf(packet.PacketHead.Version));
-            _netStream.Write(BitConverter.GetBytes((Int32)packet.PacketHead.PType), 0, sizeof(Int32));
-            _netStream.Write(BitConverter.GetBytes(packet.PacketHead.Len), 0, Marshal.SizeOf(packet.PacketHead.Len));
+            if (this.IsNetStreamCanWrite)
+            {
+                _netStream.Write(BitConverter.GetBytes(packet.PacketHead.Version), 0, Marshal.SizeOf(packet.PacketHead.Version));
+                _netStream.Write(BitConverter.GetBytes((Int32)packet.PacketHead.PType), 0, sizeof(Int32));
+                _netStream.Write(BitConverter.GetBytes(packet.PacketHead.Len), 0, Marshal.SizeOf(packet.PacketHead.Len));
+            }
             #endregion
 
             #region【写入包体】
-            byte[] buffer = null; 
-            MemoryStream m = new MemoryStream();
-            SerializeHelper<BinarySerializeHelper>().Serialize(m, packet.Command);
-            m.Position = 0;
-            buffer = new byte[m.Length];
-            m.Read(buffer, 0, (Int32)m.Length);
-           
-            if (buffer != null)
+            byte[] buffer = null;
+            using (MemoryStream m = new MemoryStream())
+            {
+                SerializeHelper<BinarySerializeHelper>().Serialize(m, packet.Command);
+                m.Position = 0;
+                buffer = new byte[m.Length];
+                m.Read(buffer, 0, (Int32)m.Length);
+            }
+
+            if (buffer != null && this.IsNetStreamCanWrite)
                 _netStream.Write(buffer, 0, buffer.Length);
             #endregion
         }

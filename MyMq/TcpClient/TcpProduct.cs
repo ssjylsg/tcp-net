@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
-using System.Text;
 
 namespace MyMq
 {
@@ -32,7 +27,7 @@ namespace MyMq
             IPAddress serverIPAddress = IPAddress.Parse(serverIP);
             _client = new TcpClient();
             _remoteEndPoint = new IPEndPoint(serverIPAddress, serverPort);
-            _client.Connect(_remoteEndPoint);
+            // _client.Connect(_remoteEndPoint);
         }
         /// <summary>
         /// 发送信息
@@ -57,9 +52,13 @@ namespace MyMq
             {
                 if (stream.CanWrite)
                 {
-                NetPacketTcpAsynService asynService =     new NetPacketTcpAsynService(stream);
-                    asynService.OnAfterSendPacket += new TcpAsynHandler2( delegate(NetPacketHead h) { stream.Close();});
-                asynService.SendMessage(packet);
+                    NetPacketTcpAsynService asynService = new NetPacketTcpAsynService(stream);
+                    asynService.OnAfterSendPacket += new TcpAsynHandler2(delegate(NetPacketHead h)
+                                                                              {
+                                                                                  _client.Close();
+                                                                                  stream.Close();
+                                                                              });
+                    asynService.SendMessage(packet);
                 }
             }
         }

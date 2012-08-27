@@ -80,17 +80,36 @@ namespace MyMq
         /// <param name="o"></param>
         private static void ReceiveClient(object o)
         {
+            #region 异步方法
             ThreadParmeter<NetPacket> parmeter = (ThreadParmeter<NetPacket>)o;
-            using (TcpClient client = parmeter.Client)
-            using (NetworkStream netstream = client.GetStream())
+            TcpClient client = parmeter.Client;
+            NetworkStream netstream = client.GetStream();
+            NetPacketTcpAsynService service = new NetPacketTcpAsynService(netstream);
+            service.OnReceivedPacket += delegate(NetPacket netPacket)
             {
-                NetPacket netPacket = new NetPacketTcpService(netstream).PickMessage();
                 if (netPacket != null)
                 {
                     InvokeReceiveMessageEventHandler(netPacket.Command.Data);
                     parmeter.MessageStoreStore.StoreMessage(netPacket);
                 }
-            }
+                netstream.Close();
+                client.Close();
+            };
+            service.PickMessage();
+            #endregion
+
+            #region 同步方法
+            //using (TcpClient client = parmeter.Client)
+            //using (NetworkStream netstream = client.GetStream())
+            //{
+            //    NetPacket netPacket = new NetPacketTcpService(netstream).PickMessage();
+            //    if (netPacket != null)
+            //    {
+            //        InvokeReceiveMessageEventHandler(netPacket.Command.Data);
+            //        parmeter.MessageStoreStore.StoreMessage(netPacket);
+            //    }
+            //}
+            #endregion
         }
 
         /// <summary>
