@@ -6,7 +6,7 @@ using System.Threading;
 namespace MyMq
 {
     /// <summary>
-    /// 使用长连接
+    ///订阅服务 
     /// </summary>
     public class TcpSubscriberService : IService
     {

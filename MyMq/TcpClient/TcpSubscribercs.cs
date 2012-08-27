@@ -6,6 +6,9 @@ using MyMq.Excepions;
 
 namespace MyMq
 {
+    /// <summary>
+    /// 消息订阅者 使用长连接
+    /// </summary>
     public class TcpSubscribercs : ISubscribercs
     {
         private TcpClient _client;

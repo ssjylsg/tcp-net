@@ -3,6 +3,9 @@ using System.Net.Sockets;
 
 namespace MyMq
 {
+    /// <summary>
+    /// 消息发布者
+    /// </summary>
     public class TcpProduct : IProduct
     {
         //  private TcpClient _client;

@@ -249,6 +249,11 @@ namespace MyMq
 
             return packet;
         } 
+        /// <summary>
+        /// 发送网络包
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="networkStream"></param>
         public void SendMessage(NetPacket data, NetworkStream networkStream)
         {
             this._netStream = networkStream;

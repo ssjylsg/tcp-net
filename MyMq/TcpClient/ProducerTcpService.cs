@@ -7,7 +7,7 @@ namespace MyMq
 {
 
     /// <summary>
-    /// 使用短连接
+    /// 发布服务 使用短连接
     /// </summary>
     public class ProducerTcpService : IService
     {

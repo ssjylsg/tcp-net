@@ -2,6 +2,9 @@
 
 namespace MyMq
 {
+    /// <summary>
+    /// Log 管理
+    /// </summary>
     class LogManger
     {
         public static void Info(object info, Type type)
