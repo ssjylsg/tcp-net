@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 
 namespace MyMq
@@ -84,7 +82,7 @@ namespace MyMq
             NetPacketTcpAsynService asynService = new NetPacketTcpAsynService(_client.GetStream());
             asynService.OnReceivedPacket += delegate(NetPacket packet)
                                                                                          {
-                                                                                             if (packet != null && packet.Command != null &&packet.Command.Data !=null)
+                                                                                             if (packet != null && packet.Command != null && packet.Command.Data != null)
                                                                                              {
                                                                                                  OnOnReceiveMessageEventHandler(packet.Command.Data);
                                                                                              }

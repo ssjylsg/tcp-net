@@ -5,7 +5,7 @@ namespace MyMq
 {
     public class TcpProduct : IProduct
     {
-      //  private TcpClient _client;
+        //  private TcpClient _client;
         private IPEndPoint _remoteEndPoint;
 
         private static readonly TcpProduct Product;
@@ -25,7 +25,7 @@ namespace MyMq
         public void Init(string serverIP, int serverPort)
         {
             IPAddress serverIPAddress = IPAddress.Parse(serverIP);
-          //  _client = new TcpClient();
+            //  _client = new TcpClient();
             _remoteEndPoint = new IPEndPoint(serverIPAddress, serverPort);
             // _client.Connect(_remoteEndPoint);
         }
