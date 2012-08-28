@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
+﻿using System.Runtime.Serialization.Formatters.Binary;
 
 namespace MyMq
 {
@@ -21,9 +18,7 @@ namespace MyMq
         /// <typeparam name="T"></typeparam>
         /// <param name="stream"></param>
         /// <returns></returns>
-        T DeSerialize<T>(System.IO.Stream stream);
-
-
+        T DeSerialize<T>(System.IO.Stream stream); 
     }
 
    internal class BinarySerializeHelper : ISerializeHelper

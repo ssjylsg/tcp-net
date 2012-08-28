@@ -35,8 +35,6 @@ namespace PubSubServer
                             this.richTextBox1.AppendText(string.Format("第{1}条数据:{0}\r\n", message.ToString(),
                                                                        _messageCount++));
                         }));
-
-
             }
         }
 

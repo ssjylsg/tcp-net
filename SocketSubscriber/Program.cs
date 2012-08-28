@@ -17,14 +17,14 @@ namespace SocketSubscriber
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
-
-
             Application.Run(new Subscriber());
         }
 
         static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
         {
-            log4net.LogManager.GetLogger(typeof(Program)).Error(e);
+            log4net.ILog log = log4net.LogManager.GetLogger(typeof(Program));
+            log.Error(sender);
+            log.Error(e);
             System.Threading.Thread.Sleep(10);
             Application.Restart();
         }

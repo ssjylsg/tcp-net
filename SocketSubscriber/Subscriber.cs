@@ -267,7 +267,7 @@ namespace SocketSubscriber
                 if (this._timer == null)
                 {
                     _timer = new Timer();
-                    _timer.Interval = 15;
+                    _timer.Interval = 20;
                     _timer.Tick += new EventHandler(timer_Tick);
                     _stopWach = new Stopwatch();
                 }
