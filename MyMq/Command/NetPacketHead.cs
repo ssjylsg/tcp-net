@@ -22,7 +22,9 @@ namespace MyMq
         /// </summary>
         COMPLEX = 2
     }
-
+    /// <summary>
+    /// 包头
+    /// </summary>
     internal class NetPacketHead
     {
         /// <summary>

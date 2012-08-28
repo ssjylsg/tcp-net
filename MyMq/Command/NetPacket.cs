@@ -4,6 +4,9 @@ using System.Text;
 
 namespace MyMq
 {
+    /// <summary>
+    /// 网络包
+    /// </summary>
     internal class NetPacket
     {
         public NetPacket()
