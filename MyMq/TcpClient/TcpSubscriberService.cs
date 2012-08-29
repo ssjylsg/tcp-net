@@ -83,7 +83,6 @@ namespace MyMq
                                                                              switch (command.CommandName)
                                                                              {
                                                                                  case CommandFlags.Subscribe:
-                                                                                     //Filter.Client = client;
                                                                                      TcpClientFilter.AddSubscriber(command.TopicName, remoteEP, client);
                                                                                      break;
                                                                                  case CommandFlags.UnSubscribe:

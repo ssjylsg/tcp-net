@@ -88,6 +88,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="类图.cd" />
     <None Include="Log\log4net.config" />
     <None Include="packages.config" />
   </ItemGroup>

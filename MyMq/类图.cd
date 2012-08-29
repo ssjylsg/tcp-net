@@ -1,14 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="ProducerTcpService 发布服务				TcpProduct 发布者&#xD;&#xA;TcpSubscriberService 订阅者服务				MessageStoreStore 消息存储以及发送消息到订阅者&#xD;&#xA;TcpSubscribercs 订阅者					TcpClientFilter 订阅者维护类&#xD;&#xA;NetPacketTcpAsynService 网络包异步处理			LogManger log日志&#xD;&#xA;NetPacket  网络数据包					NetpacketHead 包头&#xD;&#xA;ICommand 包体&#xD;&#xA;&#xD;&#xA;">
+    <Position X="0.958" Y="4.177" Height="1.292" Width="7.96" />
+  </Comment>
   <Class Name="MyMq.LogManger" Collapsed="true">
-    <Position X="7.5" Y="0.5" Width="1.5" />
+    <Position X="6.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAYAAAAAAAAAAAAAAAAEAAAAAAEAEAAA=</HashCode>
       <FileName>Log\LogManger.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="MyMq.NetPacketTcpAsynService" Collapsed="true">
-    <Position X="6" Y="3.25" Width="2.25" />
+    <Position X="6.75" Y="3.25" Width="2.25" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
       <Compartment Name="Events" Collapsed="true" />
@@ -19,7 +22,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="MyMq.NetPacketService" Collapsed="true">
-    <Position X="4.5" Y="1.75" Width="1.5" />
+    <Position X="4.75" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>BAAIBAAIAAAAAAAAAKBAJAhAXAQgABAAAAAgAAAAAQA=</HashCode>
       <FileName>PackService\NetPacketService.cs</FileName>
@@ -27,7 +30,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="MyMq.NetPacketTcpService" Collapsed="true">
-    <Position X="3" Y="3.25" Width="1.5" />
+    <Position X="3.75" Y="3.25" Width="1.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -52,7 +55,7 @@
     <Lollipop Position="0.677" />
   </Class>
   <Class Name="MyMq.MessageStoreStore&lt;T&gt;" Collapsed="true">
-    <Position X="7.5" Y="1.75" Width="1.5" />
+    <Position X="9.75" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAEAAACCIEAAAAACABAAAAAAAAABAAIQABQAAAAAA=</HashCode>
       <FileName>MessageStoreStore.cs</FileName>
@@ -68,7 +71,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="MyMq.TcpProduct" Collapsed="true">
-    <Position X="1" Y="3.5" Width="1.5" />
+    <Position X="1" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAEAAIAAAAAAAAAAAAAACAABAAAA=</HashCode>
       <FileName>TcpClient\TcpProduct.cs</FileName>
@@ -76,12 +79,40 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="MyMq.TcpSubscribercs" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="1" Y="2" Width="1.75" />
+    <Position X="1" Y="1.75" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAACAgAAAAAIAEAAAEIAAgAABAgCAAAAQAAAAABAAAA=</HashCode>
       <FileName>TcpClient\TcpSubscribercs.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
+  <Class Name="MyMq.TcpClientFilter" Collapsed="true">
+    <Position X="10.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAEAAAAAAACAAAABAAAAAAJAABAAAAAAAAAAA=</HashCode>
+      <FileName>Filter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MyMq.NetPacket" Collapsed="true">
+    <Position X="8.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAABAAAAQ=</HashCode>
+      <FileName>Command\NetPacket.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MyMq.NetPacketHead" Collapsed="true">
+    <Position X="10.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAABAAIICCAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Command\NetPacketHead.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="MyMq.ICommand" Collapsed="true">
+    <Position X="8.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAABAAAAAAAAAACAA=</HashCode>
+      <FileName>Command\ICommand.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
   <Font Name="Microsoft YaHei" Size="9" />
 </ClassDiagram>

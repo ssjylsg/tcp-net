@@ -173,10 +173,12 @@ namespace MyMq
             }
         }
     }
-
+    /// <summary>
+    /// 保存订阅者 【订阅者EndPoint + TCPClient】
+    /// </summary>
     internal class TcpClientFilter
     {
-        public static TcpClient Client;
+       // public static TcpClient Client;
         /// <summary>
         /// 订阅者数据字典
         /// </summary>
