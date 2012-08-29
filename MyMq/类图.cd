@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="MyMq.LogManger" Collapsed="true">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAYAAAAAAAAAAAAAAAAEAAAAAAEAEAAA=</HashCode>
+      <FileName>Log\LogManger.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MyMq.NetPacketTcpAsynService" Collapsed="true">
+    <Position X="6" Y="3.25" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+      <Compartment Name="Events" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAgAAAAAAACAAAAhAAAAAAAAAAAAAAAAEAEA=</HashCode>
+      <FileName>PackService\NetPacketTcpAsynService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MyMq.NetPacketService" Collapsed="true">
+    <Position X="4.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAIBAAIAAAAAAAAAKBAJAhAXAQgABAAAAAgAAAAAQA=</HashCode>
+      <FileName>PackService\NetPacketService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="MyMq.NetPacketTcpService" Collapsed="true">
+    <Position X="3" Y="3.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAACAAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>PackService\NetPacketTcpService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MyMq.ProducerTcpService" Collapsed="true">
+    <Position X="1" Y="0.5" Width="1.75" />
+    <NestedTypes>
+      <Class Name="MyMq.ProducerTcpService.ThreadParmeter&lt;T&gt;" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>TcpClient\ProducerTcpService.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAACAABAQAAAAAAAAAAABAAIAAAAAACAIA=</HashCode>
+      <FileName>TcpClient\ProducerTcpService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.677" />
+  </Class>
+  <Class Name="MyMq.MessageStoreStore&lt;T&gt;" Collapsed="true">
+    <Position X="7.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAACCIEAAAAACABAAAAAAAAABAAIQABQAAAAAA=</HashCode>
+      <FileName>MessageStoreStore.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="MyMq.TcpSubscriberService" Collapsed="true">
+    <Position X="3.75" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAEAAAAQAABAAAAIAAAABAAIAAAAAAEAIA=</HashCode>
+      <FileName>TcpClient\TcpSubscriberService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="MyMq.TcpProduct" Collapsed="true">
+    <Position X="1" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAEAAIAAAAAAAAAAAAAACAABAAAA=</HashCode>
+      <FileName>TcpClient\TcpProduct.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="MyMq.TcpSubscribercs" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="1" Y="2" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAACAgAAAAAIAEAAAEIAAgAABAgCAAAAQAAAAABAAAA=</HashCode>
+      <FileName>TcpClient\TcpSubscribercs.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Microsoft YaHei" Size="9" />
+</ClassDiagram>
