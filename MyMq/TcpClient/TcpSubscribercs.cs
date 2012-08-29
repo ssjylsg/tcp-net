@@ -7,6 +7,24 @@ using MyMq.Excepions;
 namespace MyMq
 {
     /// <summary>
+    /// 连接断开原因
+    /// </summary>
+    public class DisconnectReason
+    {
+        private Exception _exception;
+
+        public Exception Exception
+        {
+            get { return _exception; }
+            set { _exception = value; }
+        }
+    }
+    /// <summary>
+    /// 客户端断开事件
+    /// </summary>
+    /// <param name="reason"></param>
+    public delegate void SubscriberDisconnectHandler(DisconnectReason reason);
+    /// <summary>
     /// 消息订阅者 使用长连接
     /// </summary>
     public class TcpSubscribercs : ISubscribercs
@@ -20,6 +38,17 @@ namespace MyMq
         /// 订阅者接受到信息事件
         /// </summary>
         public event ReceiveMessageEventHandler OnReceiveMessageEventHandler;
+        /// <summary>
+        /// 订阅者断开事件
+        /// </summary>
+        public event SubscriberDisconnectHandler OnSubscriberDisconnectHandler;
+
+        private void OnOnSubscriberDisconnectHandler(DisconnectReason reason)
+        {
+            SubscriberDisconnectHandler handler = OnSubscriberDisconnectHandler;
+            if (handler != null) handler(reason);
+        }
+
         /// <summary>
         /// 事件处理
         /// </summary>
