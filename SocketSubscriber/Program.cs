@@ -23,10 +23,9 @@ namespace SocketSubscriber
         static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
         {
             log4net.ILog log = log4net.LogManager.GetLogger(typeof(Program));
-            log.Error(sender);
-            log.Error(e);
+            log.Error(sender, e.Exception);
             System.Threading.Thread.Sleep(10);
-            Application.Restart();
+            //Application.Restart();
         }
     }
 }

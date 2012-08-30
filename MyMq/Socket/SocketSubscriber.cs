@@ -21,6 +21,9 @@ namespace MyMq
         /// 订阅者接受到信息事件
         /// </summary>
         public event ReceiveMessageEventHandler OnReceiveMessageEventHandler;
+
+        public event ReceiveErrorHandler OnReceiveErrorHandler;
+
         /// <summary>
         /// 事件处理
         /// </summary>
@@ -62,6 +65,12 @@ namespace MyMq
                 thread1.Start();
             }
         }
+
+        public bool IsClientConnected
+        {
+            get { throw new NotImplementedException(); }
+        }
+
         /// <summary>
         /// 接受事件
         /// </summary>

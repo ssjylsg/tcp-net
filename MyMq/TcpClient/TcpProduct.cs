@@ -1,5 +1,7 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Sockets;
+using MyMq.Excepions;
 
 namespace MyMq
 {
@@ -8,18 +10,13 @@ namespace MyMq
     /// </summary>
     public class TcpProduct : IProduct
     {
-        //  private TcpClient _client;
         private IPEndPoint _remoteEndPoint;
+        /// <summary>
+        /// 发送失败事件
+        /// </summary>
+        public event SendErrorHandler OnSendErrorHandler;
 
-        private static readonly TcpProduct Product;
-        static TcpProduct()
-        {
-            Product = new TcpProduct();
-        }
-        public static TcpProduct Default
-        {
-            get { return Product; }
-        }
+        #region 初始化
         /// <summary>
         /// 初始化
         /// </summary>
@@ -28,44 +25,86 @@ namespace MyMq
         public void Init(string serverIP, int serverPort)
         {
             IPAddress serverIPAddress = IPAddress.Parse(serverIP);
-            //  _client = new TcpClient();
             _remoteEndPoint = new IPEndPoint(serverIPAddress, serverPort);
-            // _client.Connect(_remoteEndPoint);
         }
+        #endregion
+
+        #region 异步发送数据
         /// <summary>
-        /// 发送信息
+        /// 创建数据包
         /// </summary>
-        /// <param name="topicName"></param>
-        /// <param name="data"></param>
-        public void Send(string topicName, object data)
+        private NetPacket CreateNetPacket(string topicName, object data)
         {
             ICommand command = new PublishCommand();
             command.Data = data;
             command.TopicName = topicName;
             NetPacket packet = new NetPacket();
             packet.Command = command;
-
-            //if (_client.Connected == false)
-            //{
-            //    _client = new TcpClient();
-            //    _client.Connect(_remoteEndPoint);
-            //}
+            return packet;
+        }
+        private TcpClient ConnectRemote(IPEndPoint ipEndPoint)
+        {
             TcpClient client = new TcpClient();
-            client.Connect(_remoteEndPoint);
-            NetworkStream stream = client.GetStream();
-            //using (NetworkStream stream = _client.GetStream())
+            try
             {
-                if (stream.CanWrite)
+                client.Connect(_remoteEndPoint);
+            }
+            catch (SocketException socketException)
+            {
+                if (socketException.SocketErrorCode == SocketError.ConnectionRefused)
                 {
-                    NetPacketTcpAsynService asynService = new NetPacketTcpAsynService(stream);
-                    asynService.OnAfterSendPacket += new TcpAsynHandler2(delegate(NetPacketHead h)
-                                                                              {
-                                                                                  client.Close();
-                                                                                  stream.Close();
-                                                                              });
-                    asynService.SendMessage(packet);
+                    throw new ProducerException("服务端拒绝连接",
+                                                  socketException.InnerException ?? socketException);
                 }
+                if (socketException.SocketErrorCode == SocketError.HostDown)
+                {
+                    throw new ProducerException("订阅者服务端尚未启动",
+                                                  socketException.InnerException ?? socketException);
+                }
+                if (socketException.SocketErrorCode == SocketError.TimedOut)
+                {
+                    throw new ProducerException("网络超时",
+                                                  socketException.InnerException ?? socketException);
+                }
+                throw new ProducerException("未知错误",
+                                                  socketException.InnerException ?? socketException);
+            }
+            catch (Exception e)
+            {
+                throw new SubscriberException("未知错误", e.InnerException ?? e);
+            }
+            return client;
+        }
+        /// <summary>
+        /// 发送信息
+        /// </summary>
+        /// <param name="topicName">主题</param>
+        /// <param name="data">数据</param>
+        public void Send(string topicName, object data)
+        {
+            TcpClient client = ConnectRemote(this._remoteEndPoint);
+            NetworkStream stream = client.GetStream();
+            if (stream.CanWrite)
+            {
+                NetPacketTcpAsynService asynService = new NetPacketTcpAsynService(stream);
+                asynService.OnAfterSendPacket += new AfterSendPacketHandler(delegate(NetPacketHead h)
+                                                                                {
+                                                                                    client.Close();
+                                                                                    stream.Close();
+                                                                                });
+                asynService.OnSendErrorHandler += new SendErrorHandler(asynService_OnSendErrorHandler);
+                asynService.SendMessage(CreateNetPacket(topicName, data));
             }
         }
+
+        void asynService_OnSendErrorHandler(NetServiceErrorReason reason)
+        {
+            if (OnSendErrorHandler != null)
+            {
+                OnSendErrorHandler(reason);
+            }
+        }
+        #endregion
+
     }
 }

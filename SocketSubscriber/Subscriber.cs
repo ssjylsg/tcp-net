@@ -17,6 +17,7 @@ namespace SocketSubscriber
 {
     public partial class Subscriber : Form
     {
+        #region 私有变量
         Boolean _isReceivingStarted = false;
         private ISubscribercs _subscriber;
         private IProduct _product;
@@ -24,6 +25,12 @@ namespace SocketSubscriber
         private int serverPort;
         private IService _producterService;
         private IService _subscriberService;
+        public delegate void AddToTextBoxDelegate(string message);
+        private Timer _timer;
+        private System.Diagnostics.Stopwatch _stopWach;
+        private int _messageCount = 1;
+        private int _sendCount = 1;
+        #endregion
         public Subscriber()
         {
             InitializeComponent();
@@ -33,7 +40,12 @@ namespace SocketSubscriber
             sendInfoRtb.Text = DateTime.Now.ToString();
             this.Closed += new EventHandler(Subscriber_Closed);
         }
-
+        #region Form_Closed
+        /// <summary>
+        /// Form_Closed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void Subscriber_Closed(object sender, EventArgs e)
         {
             if (this._subscriber != null)
@@ -49,6 +61,9 @@ namespace SocketSubscriber
                 this._subscriberService.Stop();
             }
         }
+        #endregion
+
+        #region 初始化Socket
         private void InitSocket()
         {
             if (this.isServiceCkb.Checked)
@@ -58,14 +73,37 @@ namespace SocketSubscriber
                 _subscriberService = new SocketSubscriberService();
                 _subscriberService.StartService();
             }
-
             serverPort = Convert.ToInt32(ConfigurationSettings.AppSettings["ServerPort"]);
             _subscriber = new MyMq.SocketSubscriber(serverIP, serverPort, new TimeSpan(0, 0, 0, 0, 50));
-            _subscriber.OnReceiveMessageEventHandler += new ReceiveMessageEventHandler(_subscriber_OnReceiveMessageEventHandler);
-
             _product = new SocketProduct();
+
             _product.Init(serverIP, 10002);
         }
+        #endregion
+
+        #region 发包服务失败
+        /// <summary>
+        /// 发包服务失败
+        /// </summary>
+        /// <param name="reason"></param>
+        void _product_OnSendErrorHandler(NetServiceErrorReason reason)
+        {
+            MessageBox.Show(reason.Message);
+        }
+        #endregion
+
+        #region 订阅失败
+        void _subscriber_OnReceiveErrorHandler(NetServiceErrorReason reason)
+        {
+            if (_subscriber.IsClientConnected == false)
+            {
+
+            }
+            MessageBox.Show(reason.Message);
+        }
+        #endregion
+
+        #region 初始化Tcp
         private void InitTcp()
         {
             if (this.isServiceCkb.Checked)
@@ -78,11 +116,13 @@ namespace SocketSubscriber
 
             serverPort = Convert.ToInt32(ConfigurationSettings.AppSettings["ServerPort"]);
             _subscriber = new TcpSubscribercs(serverIP, serverPort, new TimeSpan(0, 0, 0, 0, 50));
-            _subscriber.OnReceiveMessageEventHandler += new ReceiveMessageEventHandler(_subscriber_OnReceiveMessageEventHandler);
 
             _product = new TcpProduct();
             _product.Init(serverIP, 10002);
         }
+        #endregion
+
+        #region 订阅者接收到数据
         void _subscriber_OnReceiveMessageEventHandler(object obj)
         {
             if (obj == null)
@@ -114,29 +154,14 @@ namespace SocketSubscriber
 
             }
         }
-        public static byte[] ObjectToBytes(object obj)
-        {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                IFormatter formatter = new BinaryFormatter();
-                formatter.Serialize(ms, obj);
-                return ms.GetBuffer();
-            }
-        }
-        public static object BytesToObject(byte[] Bytes)
-        {
-            using (MemoryStream ms = new MemoryStream(Bytes))
-            {
-                IFormatter formatter = new BinaryFormatter();
-                return formatter.Deserialize(ms);
-            }
-        }
+        #endregion
 
-
-        public delegate void AddToTextBoxDelegate(string message);
-
-        private int _messageCount = 1;
-        public void AddToTextBox(string message)
+        #region 附加信息
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message"></param>
+        private void AddToTextBox(string message)
         {
             message = string.Format("接受到信息{0}:{1}", _messageCount++, message.Trim(new char[] { '\0' }).Trim());
             if (this.richTextBox1.InvokeRequired)
@@ -152,12 +177,26 @@ namespace SocketSubscriber
             }
 
         }
+        #endregion
 
+        #region 清空信息
+        /// <summary>
+        /// 清空
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnClearAstaListView_Click(object sender, EventArgs e)
         {
             this.richTextBox1.Clear();
         }
+        #endregion
 
+        #region 订阅/取消订阅
+        /// <summary>
+        /// 取消订阅
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button2_Click(object sender, EventArgs e)
         {
             try
@@ -171,12 +210,16 @@ namespace SocketSubscriber
                 ((Button)sender).Visible = false;
                 button3.Visible = true;
             }
-            catch
+            catch (Exception ex)
             {
-
+                MessageBox.Show(ex.Message);
             }
         }
-
+        /// <summary>
+        /// 订阅
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button3_Click(object sender, EventArgs e)
         {
             string topicName = txtTopicName.Text.Trim();
@@ -193,7 +236,14 @@ namespace SocketSubscriber
                 _isReceivingStarted = true;
             }
         }
+        #endregion
 
+        #region 手动发送
+        /// <summary>
+        /// 手动发送
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void sendBtn_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(this.txtTopicName.Text))
@@ -202,62 +252,14 @@ namespace SocketSubscriber
             }
             this.Send(this.sendInfoRtb.Text);
         }
-        private void Send(object obj)
-        {
-            _product.Send(this.txtTopicName.Text, obj);
-        }
-        private void sendFileBtn_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog openFile = new OpenFileDialog();
-            if (openFile.ShowDialog() == DialogResult.OK)
-            {
-                using (FileStream stream = new FileStream(openFile.FileName, FileMode.Open))
-                {
-                    byte[] buffer = new byte[stream.Length];
-                    stream.Read(buffer, 0, buffer.Length);
-                    this.Send(buffer);
-                }
-            }
-        }
+        #endregion
 
-        private TcpClient _tcpClient;
-        private TcpServer _tcpServer;
-        private void SendByTcpClient(byte[] data)
-        {
-
-            if (_tcpClient == null)
-            {
-                _tcpServer = new TcpServer(serverIP);
-                _tcpServer.OnReceiveMessageEventHandler += new ReceiveByteEventHandler(_tcpServer_OnReceiveMessageEventHandler);
-                _tcpClient = new TcpClient();
-                _tcpClient.Connect(serverIP, 20003);
-            }
-            NetworkStream stream = _tcpClient.GetStream();
-            if (stream.CanWrite)
-            {
-                stream.Write(data, 0, data.Length);
-            }
-        }
-
-        void _tcpServer_OnReceiveMessageEventHandler(byte[] buffer)
-        {
-
-        }
-
-        private void TcpBtn_Click(object sender, EventArgs e)
-        {
-            if (this.socketrbtn.Checked)
-            {
-                this.InitSocket();
-            }
-            else
-            {
-                this.InitTcp();
-            }
-        }
-
-        private Timer _timer;
-        private System.Diagnostics.Stopwatch _stopWach;
+        #region 发送数据
+        /// <summary>
+        /// 自动发送数据
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void autoSendBtn_Click(object sender, EventArgs e)
         {
             if (this.autoSendBtn.Text == "自动发送")
@@ -289,17 +291,103 @@ namespace SocketSubscriber
             }
         }
 
-        private int _sendCount = 1;
+
         void timer_Tick(object sender, EventArgs e)
         {
-            this.Send(string.Format("{0}_{1}", this._sendCount++, Guid.NewGuid().ToString()));
-            this.sendTxt.Text = this._sendCount.ToString();
+            try
+            {
+                this.Send(string.Format("{0}_{1}", this._sendCount++, Guid.NewGuid().ToString()));
+                this.sendTxt.Text = this._sendCount.ToString();
+            }
+            catch (Exception ex)
+            {
+                this._timer.Stop();
+                MessageBox.Show(ex.Message);
+                this.autoSendBtn.Text = "自动发送";
+                _stopWach.Stop();
+                this.watchInfoLbl.Text = string.Format("{0}", _stopWach.ElapsedMilliseconds);
+            }
+        }
+        /// <summary>
+        /// 发送数据
+        /// </summary>
+        /// <param name="obj"></param>
+        private void Send(object obj)
+        {
+            _product.Send(this.txtTopicName.Text, obj);
+        }
+        /// <summary>
+        /// 发送文件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void sendFileBtn_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFile = new OpenFileDialog();
+            if (openFile.ShowDialog() == DialogResult.OK)
+            {
+                using (FileStream stream = new FileStream(openFile.FileName, FileMode.Open))
+                {
+                    byte[] buffer = new byte[stream.Length];
+                    stream.Read(buffer, 0, buffer.Length);
+                    this.Send(buffer);
+                }
+            }
+        }
+        #endregion
+
+        #region 初始化服务
+        /// <summary>
+        /// 初始化服务
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TcpBtn_Click(object sender, EventArgs e)
+        {
+            if (this.socketrbtn.Checked)
+            {
+                this.InitSocket();
+            }
+            else
+            {
+                this.InitTcp();
+            }
+            _subscriber.OnReceiveMessageEventHandler += new ReceiveMessageEventHandler(_subscriber_OnReceiveMessageEventHandler);
+            _subscriber.OnReceiveErrorHandler += new ReceiveErrorHandler(_subscriber_OnReceiveErrorHandler);
+            _product.OnSendErrorHandler += new SendErrorHandler(_product_OnSendErrorHandler);
+        } 
+        #endregion
+
+        #region 无用
+        private TcpClient _tcpClient;
+        private TcpServer _tcpServer;
+        private void SendByTcpClient(byte[] data)
+        {
+
+            if (_tcpClient == null)
+            {
+                _tcpServer = new TcpServer(serverIP);
+                _tcpServer.OnReceiveMessageEventHandler += new ReceiveByteEventHandler(_tcpServer_OnReceiveMessageEventHandler);
+                _tcpClient = new TcpClient();
+                _tcpClient.Connect(serverIP, 20003);
+            }
+            NetworkStream stream = _tcpClient.GetStream();
+            if (stream.CanWrite)
+            {
+                stream.Write(data, 0, data.Length);
+            }
         }
 
+        void _tcpServer_OnReceiveMessageEventHandler(byte[] buffer)
+        {
+
+        }
+       
         private void label1_Click(object sender, EventArgs e)
         {
 
         }
+        #endregion
     }
 
     public delegate void ReceiveByteEventHandler(byte[] buffer);

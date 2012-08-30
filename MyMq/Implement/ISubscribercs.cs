@@ -10,6 +10,10 @@
         /// </summary>
         event ReceiveMessageEventHandler OnReceiveMessageEventHandler;
         /// <summary>
+        /// 接收失败事件
+        /// </summary>
+        event ReceiveErrorHandler OnReceiveErrorHandler;
+        /// <summary>
         /// 取消订阅
         /// </summary>
         /// <param name="topicName"></param>
@@ -19,5 +23,9 @@
         /// </summary>
         /// <param name="topicName"></param>
         void Subscribe(string topicName);
+        /// <summary>
+        /// 客户端是否连接
+        /// </summary>
+        bool IsClientConnected { get; }
     }
 }

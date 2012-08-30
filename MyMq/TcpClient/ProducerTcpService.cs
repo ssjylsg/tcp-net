@@ -5,13 +5,11 @@ using System.Threading;
 
 namespace MyMq
 {
-
     /// <summary>
     /// 发布服务 使用短连接
     /// </summary>
     public class ProducerTcpService : IService
     {
-
         class ThreadParmeter<T> where T : class
         {
             private IMessageStore<T> _messageStoreStore1;
@@ -31,6 +29,9 @@ namespace MyMq
         }
 
         private MessageStoreStore<NetPacket> _messageStoreStore;
+        private volatile bool _stopService = false;
+
+        #region 测试使用
         /// <summary>
         /// 测试使用
         /// </summary>
@@ -41,7 +42,9 @@ namespace MyMq
             ReceiveMessageEventHandler handler = ReceiveMessageEventHandler;
             if (handler != null) handler(e);
         }
+        #endregion
 
+        #region 启动发布服务
         /// <summary>
         /// 启动发布服务
         /// </summary>
@@ -55,12 +58,6 @@ namespace MyMq
             th.Start();
             LogManger.Info("发布服务开启", this.GetType());
         }
-
-        public void Stop()
-        {
-            _messageStoreStore.Stop();
-        }
-
         /// <summary>
         /// 
         /// </summary>
@@ -72,6 +69,20 @@ namespace MyMq
             tcpListener.Start();
             StartListening(tcpListener);
         }
+        #endregion
+
+        #region 服务停止
+        /// <summary>
+        /// 服务停止
+        /// </summary>
+        public void Stop()
+        {
+            _messageStoreStore.Stop();
+            _stopService = true;
+        }
+        #endregion
+
+        #region 服务启动 开始监听连接到服务的TcpClient
         /// <summary>
         /// 接受数据
         /// </summary>
@@ -93,6 +104,14 @@ namespace MyMq
                 netstream.Close();
                 client.Close();
             };
+            service.OnReceiveErrorHandler += delegate(NetServiceErrorReason reason)
+                                                 {
+                                                     LogManger.Error(reason, typeof(ProducerTcpService));
+                                                     if (client.Connected)
+                                                     {
+                                                         client.Close();
+                                                     }
+                                                 };
             service.PickMessage();
             #endregion
 
@@ -116,6 +135,10 @@ namespace MyMq
         /// <param name="server"></param>
         private void StartListening(TcpListener server)
         {
+            if (_stopService == true)
+            {
+                return;
+            }
             server.BeginAcceptTcpClient(delegate(IAsyncResult result)
             {
                 TcpClient client = server.EndAcceptTcpClient(result);
@@ -149,5 +172,6 @@ namespace MyMq
             //}
             #endregion
         }
+        #endregion
     }
 }

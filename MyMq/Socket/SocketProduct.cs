@@ -43,5 +43,7 @@ namespace MyMq
             command.TopicName = topicName; 
             _client.SendTo(SerializeHelper.ObjectToBytes(command), _remoteEndPoint);
         }
+
+        public event SendErrorHandler OnSendErrorHandler;
     }
 }
