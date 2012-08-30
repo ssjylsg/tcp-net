@@ -10,11 +10,14 @@ namespace MyMq
     /// </summary>
     internal class MessageStoreStore<T> : IService, IMessageStore<T> where T : class
     {
+        #region 私有变量
         delegate void MethodEventHandler(object message);
         private Queue<T> _queueMessage;
         private Queue<ErrorSendMessage<TcpClient>> _errorQueue;
         private object _lockObject = new object();
         private Thread _thread;
+        private volatile bool _shouldStop;
+        #endregion
 
         public MessageStoreStore()
         {
@@ -22,6 +25,7 @@ namespace MyMq
             _errorQueue = new Queue<ErrorSendMessage<TcpClient>>();
         }
 
+        #region 线程发送数据
         private void ExecuteThread()
         {
             T message;
@@ -30,7 +34,6 @@ namespace MyMq
                 message = this.GetNextMessage();
                 if (message != null)
                 {
-                    //ThreadPool.QueueUserWorkItem(SendMessage, message);
                     MethodEventHandler methodEventHandler = new MethodEventHandler(this.SendMessage);
                     methodEventHandler.BeginInvoke(message, null, null);
                 }
@@ -58,7 +61,7 @@ namespace MyMq
                     {
                         if (stream.CanWrite)
                         {
-                            
+
                             new NetPacketTcpAsynService(stream).SendMessage(packet);
                         }
                         else
@@ -83,6 +86,10 @@ namespace MyMq
                 }
             }
         }
+        /// <summary>
+        /// 获取消息
+        /// </summary>
+        /// <returns></returns>
         private T GetNextMessage()
         {
             lock (_lockObject)
@@ -104,6 +111,13 @@ namespace MyMq
                 }
             }
         }
+        #endregion
+
+        #region 存储消息
+        /// <summary>
+        /// 存储消息
+        /// </summary>
+        /// <param name="message"></param>
         public void StoreMessage(T message)
         {
             if (message == null)
@@ -115,14 +129,24 @@ namespace MyMq
                 _queueMessage.Enqueue(message);
             }
         }
+        #endregion
 
+        #region 开始服务
+        /// <summary>
+        /// 开始服务
+        /// </summary>
         public void StartService()
         {
             _thread = new Thread(ExecuteThread);
             _thread.IsBackground = true;
             _thread.Start();
         }
-        private volatile bool _shouldStop;
+        #endregion
+        
+        #region 停止服务
+        /// <summary>
+        /// 停止服务
+        /// </summary>
         public void Stop()
         {
             _shouldStop = true;
@@ -131,6 +155,7 @@ namespace MyMq
                 this._queueMessage.Clear();
             }
         }
+        #endregion
     }
 
     class ErrorSendMessage<T>
