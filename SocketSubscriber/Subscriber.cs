@@ -88,7 +88,7 @@ namespace SocketSubscriber
         /// <param name="reason"></param>
         void _product_OnSendErrorHandler(NetServiceErrorReason reason)
         {
-            MessageBox.Show(reason.Message);
+            MessageBox.Show(string.Format("发包失败:{0}", reason.Message));
         }
         #endregion
 
@@ -99,7 +99,7 @@ namespace SocketSubscriber
             {
 
             }
-            MessageBox.Show(reason.Message);
+            MessageBox.Show(string.Format("订阅者接受数据失败:{0}", reason.Message));
         }
         #endregion
 
@@ -355,7 +355,7 @@ namespace SocketSubscriber
             _subscriber.OnReceiveMessageEventHandler += new ReceiveMessageEventHandler(_subscriber_OnReceiveMessageEventHandler);
             _subscriber.OnReceiveErrorHandler += new ReceiveErrorHandler(_subscriber_OnReceiveErrorHandler);
             _product.OnSendErrorHandler += new SendErrorHandler(_product_OnSendErrorHandler);
-        } 
+        }
         #endregion
 
         #region 无用
@@ -382,7 +382,7 @@ namespace SocketSubscriber
         {
 
         }
-       
+
         private void label1_Click(object sender, EventArgs e)
         {
 

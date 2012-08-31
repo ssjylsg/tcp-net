@@ -17,11 +17,12 @@ namespace MyMq
         #region 启动服务
         public void StartService()
         {
-            LogManger.Info("订阅服务开启", this.GetType());
+
             Filter.SubscribersList.Clear();
             _thread = new Thread(new ThreadStart(HostSubscriberService));
             _thread.IsBackground = true;
             _thread.Start();
+            LogManger.Info("订阅服务开启", this.GetType());
         }
         #endregion
 
@@ -34,6 +35,7 @@ namespace MyMq
             _server.Stop();
             _shouldStop = true;
             this.ClearAllScriber();
+            LogManger.Info("订阅服务停止", this.GetType());
         }
         #endregion
 
@@ -59,7 +61,7 @@ namespace MyMq
             EndPoint remoteEP = new IPEndPoint(IPAddress.Any, 0);
             TcpClient client = (TcpClient)o;
             byte[] bytes;
-             
+
             if (client.Connected == false)
             {
                 return;
@@ -106,7 +108,7 @@ namespace MyMq
                                                                          }
                                                                      }));
                                                                  }
-                                                                 
+
                                                                  if (client.Connected) // 处理完一个请求，然后在等待客户端发送的数据
                                                                  {
                                                                      ClientReceiveMessage(client);

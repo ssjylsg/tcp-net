@@ -47,7 +47,7 @@ namespace MyMq
             TcpClient client = new TcpClient();
             try
             {
-                client.Connect(_remoteEndPoint);
+                client.Connect(ipEndPoint);
             }
             catch (SocketException socketException)
             {
@@ -71,7 +71,7 @@ namespace MyMq
             }
             catch (Exception e)
             {
-                throw new SubscriberException("未知错误", e.InnerException ?? e);
+                throw new ProducerException("未知错误", e.InnerException ?? e);
             }
             return client;
         }
@@ -99,6 +99,7 @@ namespace MyMq
 
         void asynService_OnSendErrorHandler(NetServiceErrorReason reason)
         {
+            LogManger.Error(reason,this.GetType());
             if (OnSendErrorHandler != null)
             {
                 OnSendErrorHandler(reason);

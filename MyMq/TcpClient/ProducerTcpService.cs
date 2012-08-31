@@ -79,6 +79,7 @@ namespace MyMq
         {
             _messageStoreStore.Stop();
             _stopService = true;
+            LogManger.Info("发布服务停止", this.GetType());
         }
         #endregion
 

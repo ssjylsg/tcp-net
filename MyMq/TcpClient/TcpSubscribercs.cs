@@ -66,7 +66,7 @@ namespace MyMq
         {
             if (this.IsClientConnected == false)
             {
-                throw new SubscriberException("连接断开或尚未建立连接");
+                throw new ConnectException("连接断开或尚未建立连接，请建立连接");
             }
         }
         private void Send(byte[] buffer)
@@ -145,7 +145,7 @@ namespace MyMq
 
         #region 订阅主题
         /// <summary>
-        /// 订阅主题
+        /// 订阅主题 异常信息[ConnectException] 尚未建立建立
         /// </summary>
         /// <param name="topicName"></param>
         public void Subscribe(string topicName)
@@ -174,6 +174,7 @@ namespace MyMq
             asynService.OnReceivedPacket += ClientReceivedPacket;
             asynService.OnReceiveErrorHandler += delegate(NetServiceErrorReason reason)
                                                      {
+                                                         LogManger.Error(reason,this.GetType());
                                                          ReceiveErrorHandler(reason);
                                                      };
             asynService.PickMessage();

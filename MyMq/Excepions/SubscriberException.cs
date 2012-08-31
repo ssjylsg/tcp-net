@@ -5,6 +5,30 @@ using System.Text;
 
 namespace MyMq.Excepions
 {
+    public class ConnectException:MqException
+    {
+        public ConnectException()
+            : this("连接断开或尚未建立连接，请建立连接")
+        {
+
+        }
+        public ConnectException(string message)
+            : base(message)
+        {
+
+        }
+        public ConnectException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+
+        }
+        public ConnectException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+
+        }
+    }
+
     /// <summary>
     /// 发布者异常
     /// </summary>
