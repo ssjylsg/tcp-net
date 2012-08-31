@@ -15,11 +15,11 @@ namespace PubSubServer
         private IService _subscriberService; // 订阅服务
         private void HostPublishSubscribeServices()
         {
-            ProducerTcpService.ReceiveMessageEventHandler += new ReceiveMessageEventHandler(ProducerTcpService_ReceiveMessageEventHandler);
-            _producterService = new ProducerTcpService();
+            PublishTcpService.ReceiveMessageEventHandler += new ReceiveMessageEventHandler(ProducerTcpService_ReceiveMessageEventHandler);
+            _producterService = new PublishTcpService();
 
             _producterService.StartService();
-            _subscriberService = new TcpSubscriberService();
+            _subscriberService = new TcpSubscribersService();
             _subscriberService.StartService();
 
         }

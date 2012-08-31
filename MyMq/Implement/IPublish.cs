@@ -3,7 +3,7 @@
     /// <summary>
     /// 消息发布
     /// </summary>
-    public interface IProduct
+    public interface IPublish
     {
         void Init(string serverIP, int serverPort);
         void Send(string topicName, object data);

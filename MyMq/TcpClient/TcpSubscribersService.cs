@@ -8,7 +8,7 @@ namespace MyMq
     /// <summary>
     ///订阅服务 
     /// </summary>
-    public class TcpSubscriberService : IService
+    public class TcpSubscribersService : IService
     {
         private Thread _thread;
         private volatile bool _shouldStop;
@@ -80,7 +80,7 @@ namespace MyMq
                                                                  }
                                                                  catch (Exception e)
                                                                  {
-                                                                     LogManger.Error(e, typeof(TcpSubscribercs));
+                                                                     LogManger.Error(e, typeof(TcpSubscribers));
                                                                  }
                                                                  if (readCount > 0)
                                                                  {
@@ -102,7 +102,7 @@ namespace MyMq
                                                                                      TcpClientFilter.RemoveSubscriber(command.TopicName, remoteEP);
                                                                                      break;
                                                                                  default:
-                                                                                     LogManger.Warn("不支持的命令" + command.CommandName, typeof(TcpSubscriberService));
+                                                                                     LogManger.Warn("不支持的命令" + command.CommandName, typeof(TcpSubscribersService));
                                                                                      break;
                                                                              }
                                                                          }

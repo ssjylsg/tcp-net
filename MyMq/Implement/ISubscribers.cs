@@ -3,7 +3,7 @@
     /// <summary>
     /// 订阅
     /// </summary>
-    public interface ISubscribercs
+    public interface ISubscribers
     {
         /// <summary>
         /// 接受到信息事件

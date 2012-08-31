@@ -8,7 +8,7 @@ namespace MyMq
     /// <summary>
     /// 发布服务 使用短连接
     /// </summary>
-    public class ProducerTcpService : IService
+    public class PublishTcpService : IService
     {
         class ThreadParmeter<T> where T : class
         {
@@ -107,7 +107,7 @@ namespace MyMq
             };
             service.OnReceiveErrorHandler += delegate(NetServiceErrorReason reason)
                                                  {
-                                                     LogManger.Error(reason, typeof(ProducerTcpService));
+                                                     LogManger.Error(reason, typeof(PublishTcpService));
                                                      if (client.Connected)
                                                      {
                                                          client.Close();

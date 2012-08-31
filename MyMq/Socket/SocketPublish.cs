@@ -6,19 +6,19 @@ namespace MyMq
     /// <summary>
     /// 消息生产者
     /// </summary>
-    public class SocketProduct : IProduct
+    public class SocketPublish : IPublish
     {
         private Socket _client;
         private EndPoint _remoteEndPoint;
 
-        private static readonly SocketProduct _product;
-        static SocketProduct()
+        private static readonly SocketPublish _publish;
+        static SocketPublish()
         {
-            _product = new SocketProduct();
+            _publish = new SocketPublish();
         }
-        public static SocketProduct Default
+        public static SocketPublish Default
         {
-            get { return _product; }
+            get { return _publish; }
         }
         /// <summary>
         /// 初始化

@@ -9,7 +9,7 @@ namespace MyMq
     /// <summary>
     /// 订阅者
     /// </summary>
-    public class SocketSubscriber : ISubscribercs
+    public class SocketSubscriber : ISubscribers
     {
         private Socket _client;
         private EndPoint _remoteEndPoint;
