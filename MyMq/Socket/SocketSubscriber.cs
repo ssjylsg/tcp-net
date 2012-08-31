@@ -20,9 +20,9 @@ namespace MyMq
         /// <summary>
         /// 订阅者接受到信息事件
         /// </summary>
-        public event ReceiveMessageEventHandler OnReceiveMessageEventHandler;
+        public event ReceiveMessageEventHandler ReceiveMessage;
 
-        public event ReceiveErrorHandler OnReceiveErrorHandler;
+        public event ReceiveErrorHandler ReceiveMessageError;
 
         /// <summary>
         /// 事件处理
@@ -30,7 +30,7 @@ namespace MyMq
         /// <param name="message"></param>
         private void OnOnReceiveMessageEventHandler(byte[] message)
         {
-            ReceiveMessageEventHandler handler = OnReceiveMessageEventHandler;
+            ReceiveMessageEventHandler handler = ReceiveMessage;
             if (handler != null) handler(SerializeHelper.BytesToObject(message));
         }
         /// <summary>

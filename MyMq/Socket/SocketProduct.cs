@@ -44,6 +44,6 @@ namespace MyMq
             _client.SendTo(SerializeHelper.ObjectToBytes(command), _remoteEndPoint);
         }
 
-        public event SendErrorHandler OnSendErrorHandler;
+        public event SendErrorHandler SendMessageError;
     }
 }

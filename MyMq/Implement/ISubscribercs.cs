@@ -8,11 +8,11 @@
         /// <summary>
         /// 接受到信息事件
         /// </summary>
-        event ReceiveMessageEventHandler OnReceiveMessageEventHandler;
+        event ReceiveMessageEventHandler ReceiveMessage;
         /// <summary>
         /// 接收失败事件
         /// </summary>
-        event ReceiveErrorHandler OnReceiveErrorHandler;
+        event ReceiveErrorHandler ReceiveMessageError;
         /// <summary>
         /// 取消订阅
         /// </summary>

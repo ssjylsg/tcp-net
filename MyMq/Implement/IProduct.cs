@@ -10,6 +10,6 @@
         /// <summary>
         /// 发包失败
         /// </summary>
-        event SendErrorHandler OnSendErrorHandler;
+        event SendErrorHandler SendMessageError;
     }
 }

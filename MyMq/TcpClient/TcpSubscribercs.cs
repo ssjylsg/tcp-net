@@ -22,15 +22,15 @@ namespace MyMq
         /// <summary>
         /// 订阅者接受到信息事件
         /// </summary>
-        public event ReceiveMessageEventHandler OnReceiveMessageEventHandler;
+        public event ReceiveMessageEventHandler ReceiveMessage;
         /// <summary>
         /// 接收失败事件
         /// </summary>
-        public event ReceiveErrorHandler OnReceiveErrorHandler;
+        public event ReceiveErrorHandler ReceiveMessageError;
 
         private void ReceiveErrorHandler(NetServiceErrorReason reason)
         {
-            ReceiveErrorHandler handler = OnReceiveErrorHandler;
+            ReceiveErrorHandler handler = ReceiveMessageError;
             if (handler != null) handler(reason);
         }
 
@@ -40,7 +40,7 @@ namespace MyMq
         /// <param name="message"></param>
         private void OnOnReceiveMessageEventHandler(object message)
         {
-            ReceiveMessageEventHandler handler = OnReceiveMessageEventHandler;
+            ReceiveMessageEventHandler handler = ReceiveMessage;
             if (handler != null) handler(message);
         }
         #endregion
