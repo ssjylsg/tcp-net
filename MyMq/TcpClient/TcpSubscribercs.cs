@@ -114,6 +114,7 @@ namespace MyMq
         {
             try
             {
+                _isReceivingStarted = false;
                 _client.Connect(_remoteEndPoint);
             }
             catch (SocketException socketException)
@@ -174,7 +175,7 @@ namespace MyMq
             asynService.OnReceivedPacket += ClientReceivedPacket;
             asynService.OnReceiveErrorHandler += delegate(NetServiceErrorReason reason)
                                                      {
-                                                         LogManger.Error(reason,this.GetType());
+                                                         LogManger.Error(reason, this.GetType());
                                                          ReceiveErrorHandler(reason);
                                                      };
             asynService.PickMessage();

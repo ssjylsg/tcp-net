@@ -27,5 +27,9 @@
         /// 客户端是否连接
         /// </summary>
         bool IsClientConnected { get; }
+        /// <summary>
+        /// 使用原IP+Port 重新连接
+        /// </summary>
+        void ReConnectServer();
     }
 }

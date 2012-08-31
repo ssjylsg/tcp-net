@@ -17,7 +17,7 @@ namespace SocketSubscriber
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
-            Application.Run(new Subscriber());
+            Application.Run(new SubscriberForm());
         }
 
         static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)

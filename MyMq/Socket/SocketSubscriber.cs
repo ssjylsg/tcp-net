@@ -71,6 +71,11 @@ namespace MyMq
             get { throw new NotImplementedException(); }
         }
 
+        public void ReConnectServer()
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// 接受事件
         /// </summary>

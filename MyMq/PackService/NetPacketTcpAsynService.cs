@@ -70,15 +70,15 @@ namespace MyMq
         public override string ToString()
         {
             System.Text.StringBuilder stringBuilder = new StringBuilder();
-            if(this.SendData != null)
+            if (this.SendData != null)
             {
                 stringBuilder.AppendLine(string.Format("发送数据:{0}", this.SendData.ToString()));
             }
-            if(this.Exception == null && string.IsNullOrEmpty(this.Message) == false)
+            if (this.Exception == null && string.IsNullOrEmpty(this.Message) == false)
             {
                 stringBuilder.AppendLine(string.Format("错误信息:{0}", this.Message));
             }
-            if(this.Exception != null)
+            if (this.Exception != null)
             {
                 stringBuilder.AppendLine(string.Format("异常信息:{0}", this.Exception.ToString()));
             }
