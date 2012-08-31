@@ -19,8 +19,8 @@ namespace SocketSubscriber
     {
         #region 私有变量
         Boolean _isReceivingStarted = false;
-        private ISubscribercs _subscriber;
-        private IProduct _product;
+        private ISubscribers _subscriber;
+        private IPublish _publish;
         private string serverIP;
         private int serverPort;
         private IService _producterService;
@@ -74,9 +74,9 @@ namespace SocketSubscriber
             }
             serverPort = Convert.ToInt32(ConfigurationSettings.AppSettings["ServerPort"]);
             _subscriber = new MyMq.SocketSubscriber(serverIP, serverPort, new TimeSpan(0, 0, 0, 0, 50));
-            _product = new SocketProduct();
+            _publish = new SocketPublish();
 
-            _product.Init(serverIP, 10002);
+            _publish.Init(serverIP, 10002);
         }
         #endregion
 
@@ -114,17 +114,17 @@ namespace SocketSubscriber
         {
             if (this.isServiceCkb.Checked)
             {
-                _producterService = new ProducerTcpService();
+                _producterService = new PublishTcpService();
                 _producterService.StartService();
-                _subscriberService = new TcpSubscriberService();
+                _subscriberService = new TcpSubscribersService();
                 _subscriberService.StartService();
             }
 
             serverPort = Convert.ToInt32(ConfigurationSettings.AppSettings["ServerPort"]);
-            _subscriber = new TcpSubscribercs(serverIP, serverPort, new TimeSpan(0, 0, 0, 0, 50));
+            _subscriber = new TcpSubscribers(serverIP, serverPort, new TimeSpan(0, 0, 0, 0, 50));
 
-            _product = new TcpProduct();
-            _product.Init(serverIP, 10002);
+            _publish = new TcpPublish();
+            _publish.Init(serverIP, 10002);
         }
         #endregion
 
@@ -319,7 +319,7 @@ namespace SocketSubscriber
         /// <param name="obj"></param>
         private void Send(object obj)
         {
-            _product.Send(this.txtTopicName.Text, obj);
+            _publish.Send(this.txtTopicName.Text, obj);
         }
         /// <summary>
         /// 发送文件
@@ -360,7 +360,7 @@ namespace SocketSubscriber
             // 注册事件
             _subscriber.ReceiveMessage += new ReceiveMessageEventHandler(_subscriber_OnReceiveMessageEventHandler);
             _subscriber.ReceiveMessageError += new ReceiveErrorHandler(_subscriber_OnReceiveErrorHandler);
-            _product.OnSendErrorHandler += new SendErrorHandler(_product_OnSendErrorHandler);
+            _publish.SendMessageError += new SendErrorHandler(_product_OnSendErrorHandler);
         }
         #endregion
 

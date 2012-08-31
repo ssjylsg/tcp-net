@@ -57,8 +57,8 @@
     <Compile Include="Implement\ISendMessage.cs" />
     <Compile Include="Implement\ISerializeHelper.cs" />
     <Compile Include="Implement\IService.cs" />
-    <Compile Include="Implement\ISubscribercs.cs" />
-    <Compile Include="Implement\IProduct.cs" />
+    <Compile Include="Implement\ISubscribers.cs" />
+    <Compile Include="Implement\IPublish.cs" />
     <Compile Include="Log\LogManger.cs" />
     <Compile Include="MessageStoreStore.cs" />
     <Compile Include="PackService\NetPacketService.cs" />
@@ -70,15 +70,15 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
-    <Compile Include="Socket\SocketProduct.cs" />
+    <Compile Include="Socket\SocketPublish.cs" />
     <Compile Include="Socket\ProducerSocketService.cs" />
     <Compile Include="Socket\SocketSubscriber.cs" />
     <Compile Include="Socket\SocketSubscriberService.cs" />
     <Compile Include="SystemConfig.cs" />
-    <Compile Include="TcpClient\ProducerTcpService.cs" />
-    <Compile Include="TcpClient\TcpProduct.cs" />
-    <Compile Include="TcpClient\TcpSubscribercs.cs" />
-    <Compile Include="TcpClient\TcpSubscriberService.cs" />
+    <Compile Include="TcpClient\PublishTcpService.cs" />
+    <Compile Include="TcpClient\TcpPublish.cs" />
+    <Compile Include="TcpClient\TcpSubscribers.cs" />
+    <Compile Include="TcpClient\TcpSubscribersService.cs" />
     <Compile Include="WorkerThreadParameters.cs" />
   </ItemGroup>
   <ItemGroup>

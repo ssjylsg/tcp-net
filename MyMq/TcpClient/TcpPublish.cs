@@ -8,13 +8,13 @@ namespace MyMq
     /// <summary>
     /// 消息发布者
     /// </summary>
-    public class TcpProduct : IProduct
+    public class TcpPublish : IPublish
     {
         private IPEndPoint _remoteEndPoint;
         /// <summary>
         /// 发送失败事件
         /// </summary>
-        public event SendErrorHandler OnSendErrorHandler;
+        public event SendErrorHandler SendMessageError;
 
         #region 初始化
         /// <summary>
@@ -100,9 +100,9 @@ namespace MyMq
         void asynService_OnSendErrorHandler(NetServiceErrorReason reason)
         {
             LogManger.Error(reason,this.GetType());
-            if (OnSendErrorHandler != null)
+            if (SendMessageError != null)
             {
-                OnSendErrorHandler(reason);
+                SendMessageError(reason);
             }
         }
         #endregion

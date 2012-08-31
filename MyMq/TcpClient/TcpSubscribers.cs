@@ -9,7 +9,7 @@ namespace MyMq
     /// <summary>
     /// 消息订阅者 使用长连接
     /// </summary>
-    public class TcpSubscribercs : ISubscribercs
+    public class TcpSubscribers : ISubscribers
     {
         #region 私有变量
         private TcpClient _client;
@@ -88,7 +88,7 @@ namespace MyMq
         /// <param name="serverIp">Server IP</param>
         /// <param name="serverPort">Server Port</param>
         /// <param name="sleepTimeSpan"></param>
-        public TcpSubscribercs(string serverIp, int serverPort, TimeSpan sleepTimeSpan)
+        public TcpSubscribers(string serverIp, int serverPort, TimeSpan sleepTimeSpan)
         {
             if (string.IsNullOrEmpty(serverIp))
             {
