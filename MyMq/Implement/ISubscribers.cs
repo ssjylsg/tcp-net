@@ -16,12 +16,12 @@
         /// <summary>
         /// 取消订阅
         /// </summary>
-        /// <param name="topicName"></param>
+        /// <param name="topicName">主题</param>
         void UnSubscribe(string topicName);
         /// <summary>
         /// 订阅
         /// </summary>
-        /// <param name="topicName"></param>
+        /// <param name="topicName">主题</param>
         void Subscribe(string topicName);
         /// <summary>
         /// 客户端是否连接

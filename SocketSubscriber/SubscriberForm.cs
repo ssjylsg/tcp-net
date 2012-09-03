@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Windows.Forms;
 using System.Configuration;
@@ -149,12 +146,17 @@ namespace SocketSubscriber
                 if (obj is byte[])
                 {
                     string fileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
-                                                      string.Format("{0}.log", DateTime.Now.ToString("yyyy_MM-dd_hh_mm_ss")));
-                    using (FileStream writer = new FileStream(fileName, FileMode.OpenOrCreate))
-                    {
-                        byte[] buffer = (byte[])(obj);
-                        writer.BeginWrite(buffer, 0, buffer.Length, null, null);
-                    }
+                                                      string.Format("{0}.jpg", DateTime.Now.ToString("yyyy_MM-dd_hh_mm_ss")));
+                    FileStream writer = new FileStream(fileName, FileMode.OpenOrCreate);
+
+                    byte[] buffer = (byte[])(obj);
+                    writer.BeginWrite(buffer, 0, buffer.Length, delegate(IAsyncResult result)
+                            {
+                                writer.EndWrite(result);
+                                InvokeTextBox(this.sendInfoRtb, string.Format("接收文件读写完成，共{0}", buffer.Length));
+                                writer.Close();
+                            }, null);
+
                     this.AddToTextBox(string.Format("接受到文件"));
                 }
 
@@ -163,6 +165,20 @@ namespace SocketSubscriber
         #endregion
 
         #region 附加信息
+        private void InvokeTextBox(RichTextBox richTextBox, string message)
+        {
+            if (richTextBox.InvokeRequired)
+            {
+                richTextBox.Invoke(new MethodInvoker(delegate()
+                {
+                    richTextBox.AppendText(string.Format("{0}\r\n", message));
+                }));
+            }
+            else
+            {
+                richTextBox.AppendText(string.Format("{0}\r\n", message));
+            }
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -170,17 +186,7 @@ namespace SocketSubscriber
         private void AddToTextBox(string message)
         {
             message = string.Format("接受到信息{0}:{1}", _messageCount++, message.Trim(new char[] { '\0' }).Trim());
-            if (this.richTextBox1.InvokeRequired)
-            {
-                this.richTextBox1.Invoke(new MethodInvoker(delegate()
-                                                               {
-                                                                   this.richTextBox1.AppendText(string.Format("{0}\r\n", message));
-                                                               }));
-            }
-            else
-            {
-                this.richTextBox1.AppendText(string.Format("{0}\r\n", message));
-            }
+            InvokeTextBox(this.richTextBox1, message);
 
         }
         #endregion
@@ -215,6 +221,7 @@ namespace SocketSubscriber
                 _subscriber.UnSubscribe(topicName);
                 ((Button)sender).Visible = false;
                 button3.Visible = true;
+                _showErrorMsgCount = 0;
             }
             catch (Exception ex)
             {
@@ -301,8 +308,10 @@ namespace SocketSubscriber
         {
             try
             {
+                this._timer.Enabled = false;
                 this.Send(string.Format("{0}_{1}", this._sendCount++, Guid.NewGuid().ToString()));
                 this.sendTxt.Text = this._sendCount.ToString();
+                this._timer.Enabled = true;
             }
             catch (Exception ex)
             {

@@ -172,21 +172,32 @@ namespace MyMq
         /// <param name="result"></param>
         private void AsyncCallbackReadFromNetStream(IAsyncResult result)
         {
+            int readLen;
             try
             {
                 NetworkStream netStream = (NetworkStream)result.AsyncState;
-                int readLen = netStream.EndRead(result);
+                readLen = netStream.EndRead(result);
                 //判断读取的字节数+缓冲区已有字节数是否超过缓冲区总大小
                 if (readLen + _netDataOffset > _netDataBuffer.Length)
                 {
                     if (IsFullNetPacketHead())//如果缓冲区数据满足一个包头数据大小,则可以计算出本次接收的包需要的缓冲区大小,从而实现一次调整大小
                     {
-                        Array.Resize<Byte>(ref _netDataBuffer, FullNetPacketSize);
+                        int fullNetSize = FullNetPacketSize;
+                        if(fullNetSize < readLen)
+                        {
+                            LogManger.Error("Error",this.GetType());
+                        }
+                        Array.Resize<Byte>(ref _netDataBuffer, fullNetSize);//FullNetPacketSize);
                     }
                     else //不满足一个完整的网络封包的大小
                     {
                         Array.Resize<Byte>(ref _netDataBuffer, _netDataBuffer.Length + BUFFER_SIZE * 2);
                     }
+                }
+                if (_netDataBuffer.Length < _netDataOffset + readLen) // 特殊处理
+                {
+                    LogManger.Error("True", this.GetType());
+                    Array.Resize<Byte>(ref _netDataBuffer, _netDataBuffer.Length + BUFFER_SIZE);
                 }
                 //将新读取的数据拷贝到缓冲区
                 Array.Copy(_tempBuffer, 0, _netDataBuffer, _netDataOffset, readLen);
