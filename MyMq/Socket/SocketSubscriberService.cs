@@ -8,7 +8,7 @@ namespace MyMq
     /// <summary>
     /// 订阅服务
     /// </summary>
-    public class SocketSubscriberService : IService
+    internal class SocketSubscriberService : IService
     {
         private Thread _thread;
         private volatile bool _running;

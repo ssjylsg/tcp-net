@@ -8,7 +8,7 @@ namespace MyMq
     /// <summary>
     /// 消息生产者中心服务
     /// </summary>
-    public class ProducerSocketService : IService
+    internal class ProducerSocketService : IService
     {
         private volatile bool _shouldStop;
         /// <summary>

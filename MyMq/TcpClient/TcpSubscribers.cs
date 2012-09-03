@@ -27,6 +27,16 @@ namespace MyMq
         /// 接收失败事件
         /// </summary>
         public event ReceiveErrorHandler ReceiveMessageError;
+        /// <summary>
+        /// 服务端断开 当服务端断开后，需要重新注册主题
+        /// </summary>
+        public event EventHandler ServerClosed;
+
+        public void OnServerClosed(EventArgs e)
+        {
+            EventHandler handler = ServerClosed;
+            if (handler != null) handler(this, e);
+        }
 
         private void ReceiveErrorHandler(NetServiceErrorReason reason)
         {
@@ -166,19 +176,21 @@ namespace MyMq
         #endregion
 
         #region 订阅主题后从服务端接收订阅数据
+
+        private NetPacketTcpAsynService _asynService;
         /// <summary>
         /// 接受事件
         /// </summary>
         private void ReceiveDataFromServer()
         {
-            NetPacketTcpAsynService asynService = new NetPacketTcpAsynService(_client.GetStream());
-            asynService.OnReceivedPacket += ClientReceivedPacket;
-            asynService.OnReceiveErrorHandler += delegate(NetServiceErrorReason reason)
+            _asynService = new NetPacketTcpAsynService(_client.GetStream());
+            _asynService.OnReceivedPacket += ClientReceivedPacket;
+            _asynService.OnReceiveErrorHandler += delegate(NetServiceErrorReason reason)
                                                      {
                                                          LogManger.Error(reason, this.GetType());
                                                          ReceiveErrorHandler(reason);
                                                      };
-            asynService.PickMessage();
+            _asynService.PickMessage();
             #region 同步
             //while (_isReceivingStarted)
             //{
@@ -202,9 +214,17 @@ namespace MyMq
         }
         private void ClientReceivedPacket(NetPacket packet)
         {
-            if (packet != null && packet.Command != null && packet.Command.Data != null)
+            if (packet != null && packet.Command != null)
             {
-                OnOnReceiveMessageEventHandler(packet.Command.Data);
+                if (packet.Command is ServerClosed) // 服务端断开
+                {
+                    OnServerClosed(new EventArgs());
+                    LogManger.Warn("服务端断开连接", this.GetType());
+                }
+                else if (packet.Command.Data != null)
+                {
+                    OnOnReceiveMessageEventHandler(packet.Command.Data);
+                }
             }
         }
         #endregion

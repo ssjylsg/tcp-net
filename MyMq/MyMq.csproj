@@ -44,6 +44,7 @@
     <Compile Include="Command\NetPacket.cs" />
     <Compile Include="Command\NetPacketHead.cs" />
     <Compile Include="Command\PublishCommand.cs" />
+    <Compile Include="Command\ServerClosed.cs" />
     <Compile Include="Command\SubscriberCommand.cs" />
     <Compile Include="Command\UnSubscribeCommand.cs" />
     <Compile Include="Excepions\MqException.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="Socket\SocketSubscriberService.cs" />
     <Compile Include="SystemConfig.cs" />
     <Compile Include="TcpClient\PublishTcpService.cs" />
+    <Compile Include="TcpClient\PubSubService.cs" />
     <Compile Include="TcpClient\TcpPublish.cs" />
     <Compile Include="TcpClient\TcpSubscribers.cs" />
     <Compile Include="TcpClient\TcpSubscribersService.cs" />

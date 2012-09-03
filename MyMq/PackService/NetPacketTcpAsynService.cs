@@ -182,12 +182,7 @@ namespace MyMq
                 {
                     if (IsFullNetPacketHead())//如果缓冲区数据满足一个包头数据大小,则可以计算出本次接收的包需要的缓冲区大小,从而实现一次调整大小
                     {
-                        int fullNetSize = FullNetPacketSize;
-                        if(fullNetSize < readLen)
-                        {
-                            LogManger.Error("Error",this.GetType());
-                        }
-                        Array.Resize<Byte>(ref _netDataBuffer, fullNetSize);//FullNetPacketSize);
+                        Array.Resize<Byte>(ref _netDataBuffer, FullNetPacketSize);
                     }
                     else //不满足一个完整的网络封包的大小
                     {
@@ -196,7 +191,6 @@ namespace MyMq
                 }
                 if (_netDataBuffer.Length < _netDataOffset + readLen) // 特殊处理
                 {
-                    LogManger.Error("True", this.GetType());
                     Array.Resize<Byte>(ref _netDataBuffer, _netDataBuffer.Length + BUFFER_SIZE);
                 }
                 //将新读取的数据拷贝到缓冲区

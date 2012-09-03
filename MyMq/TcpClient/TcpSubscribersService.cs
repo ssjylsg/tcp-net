@@ -8,7 +8,7 @@ namespace MyMq
     /// <summary>
     ///订阅服务 
     /// </summary>
-    public class TcpSubscribersService : IService
+    internal class TcpSubscribersService : IService
     {
         private Thread _thread;
         private volatile bool _shouldStop;
@@ -17,10 +17,9 @@ namespace MyMq
         #region 启动服务
         public void StartService()
         {
-
-            Filter.SubscribersList.Clear();
             _thread = new Thread(new ThreadStart(HostSubscriberService));
             _thread.IsBackground = true;
+            this._shouldStop = false;
             _thread.Start();
             LogManger.Info("订阅服务开启", this.GetType());
         }

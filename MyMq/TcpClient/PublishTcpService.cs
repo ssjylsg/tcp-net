@@ -8,7 +8,7 @@ namespace MyMq
     /// <summary>
     /// 发布服务 使用短连接
     /// </summary>
-    public class PublishTcpService : IService
+    internal class PublishTcpService : IService
     {
         class ThreadParmeter<T> where T : class
         {
@@ -30,7 +30,7 @@ namespace MyMq
 
         private MessageStoreStore<NetPacket> _messageStoreStore;
         private volatile bool _stopService = false;
-
+        private TcpListener _tcpListener;
         #region 测试使用
         /// <summary>
         /// 测试使用
@@ -50,11 +50,11 @@ namespace MyMq
         /// </summary>
         public void StartService()
         {
-
             Thread th = new Thread(new ThreadStart(HostPublisherService));
             _messageStoreStore = new MessageStoreStore<NetPacket>();
             _messageStoreStore.StartService();
             th.IsBackground = true;
+            _stopService = false;
             th.Start();
             LogManger.Info("发布服务开启", this.GetType());
         }
@@ -65,9 +65,9 @@ namespace MyMq
         {
             IPAddress ipV4 = NetHelper.GetLocalMachineIP();
             IPEndPoint localEP = new IPEndPoint(ipV4, SystemConfig.PublishServerPort);
-            TcpListener tcpListener = new TcpListener(localEP);
-            tcpListener.Start();
-            StartListening(tcpListener);
+            _tcpListener = new TcpListener(localEP);
+            _tcpListener.Start();
+            StartListening(_tcpListener);
         }
         #endregion
 
@@ -77,8 +77,9 @@ namespace MyMq
         /// </summary>
         public void Stop()
         {
-            _messageStoreStore.Stop();
             _stopService = true;
+            _messageStoreStore.Stop();
+            _tcpListener.Stop();
             LogManger.Info("发布服务停止", this.GetType());
         }
         #endregion
@@ -142,6 +143,10 @@ namespace MyMq
             }
             server.BeginAcceptTcpClient(delegate(IAsyncResult result)
             {
+                if (_stopService == true)
+                {
+                    return;
+                }
                 TcpClient client = server.EndAcceptTcpClient(result);
                 ThreadParmeter<NetPacket> parmeter = new ThreadParmeter<NetPacket>();
                 parmeter.Client = client;

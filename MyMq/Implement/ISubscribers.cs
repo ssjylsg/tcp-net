@@ -14,6 +14,10 @@
         /// </summary>
         event ReceiveErrorHandler ReceiveMessageError;
         /// <summary>
+        /// 服务端关闭
+        /// </summary>
+        event System.EventHandler ServerClosed;
+        /// <summary>
         /// 取消订阅
         /// </summary>
         /// <param name="topicName">主题</param>

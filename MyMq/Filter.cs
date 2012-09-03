@@ -94,7 +94,7 @@ namespace MyMq
     /// </summary>
     internal class Filter
     {
-      //  public static TcpClient Client;
+        //  public static TcpClient Client;
         /// <summary>
         /// 订阅者数据字典
         /// </summary>
@@ -178,7 +178,7 @@ namespace MyMq
     /// </summary>
     internal class TcpClientFilter
     {
-       // public static TcpClient Client;
+        // public static TcpClient Client;
         /// <summary>
         /// 订阅者数据字典
         /// </summary>
@@ -199,12 +199,35 @@ namespace MyMq
             }
         }
         /// <summary>
+        /// 获取所有连接的客户
+        /// </summary>
+        /// <returns></returns>
+        public static List<TcpClient> GetAllConnectedTcpClient()
+        {
+            List<TcpClient> connectedList = new List<TcpClient>();
+            foreach (List<TcpClientEndPoint> tcpClientEndPoints in TcpClientFilter.SubscribersList.Values)
+            {
+                foreach (TcpClientEndPoint tcpClientEndPoint in tcpClientEndPoints)
+                {
+                    if (tcpClientEndPoint.Client.Connected)
+                    {
+                        connectedList.Add(tcpClientEndPoint.Client);
+                    }
+                }
+            }
+            return connectedList;
+        }
+        /// <summary>
         /// 根据主题获取订阅者
         /// </summary>
         /// <param name="topicName"></param>
         /// <returns></returns>
         public static List<TcpClient> GetSubscribers(String topicName)
         {
+            if (string.IsNullOrEmpty(topicName))
+            {
+                return new List<TcpClient>();
+            }
             lock (_lockObject)
             {
                 if (SubscribersList.ContainsKey(topicName))
@@ -229,7 +252,7 @@ namespace MyMq
         /// <param name="sPoint"></param>
         /// <param name="findPoint"></param>
         /// <returns></returns>
-        private static bool FindFirstSameEndPoint(List<TcpClientEndPoint> list, EndPoint sPoint,out TcpClientEndPoint findPoint)
+        private static bool FindFirstSameEndPoint(List<TcpClientEndPoint> list, EndPoint sPoint, out TcpClientEndPoint findPoint)
         {
             foreach (TcpClientEndPoint tcpClientEndPoint in list)
             {

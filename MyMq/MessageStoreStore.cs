@@ -11,7 +11,7 @@ namespace MyMq
     internal class MessageStoreStore<T> : IService, IMessageStore<T> where T : class
     {
         #region 私有变量
-        delegate void MethodEventHandler(object message);
+        delegate void MethodEventHandler(NetPacket message, IList<TcpClient> targetClient);
         private Queue<T> _queueMessage;
         private Queue<ErrorSendMessage<TcpClient>> _errorQueue;
         private object _lockObject = new object();
@@ -32,24 +32,23 @@ namespace MyMq
             while (_shouldStop == false)
             {
                 message = this.GetNextMessage();
-                if (message != null)
+                if (message != null && message is NetPacket)
                 {
+
+                    NetPacket packet = message as NetPacket;
+
                     MethodEventHandler methodEventHandler = new MethodEventHandler(this.SendMessage);
-                    methodEventHandler.BeginInvoke(message, null, null);
+                    methodEventHandler.BeginInvoke(packet, TcpClientFilter.GetSubscribers(packet.Command.TopicName),
+                                                   null, null);
+
                 }
                 Thread.Sleep(10);
             }
         }
 
-        private void SendMessage(object message)
+        private void SendMessage(NetPacket packet, IList<TcpClient> targetClient)
         {
-            NetPacket packet = message as NetPacket;
-            if (packet == null)
-            {
-                return;
-            }
-            ICommand command = packet.Command;
-            foreach (TcpClient endPoint in TcpClientFilter.GetSubscribers(command.TopicName))
+            foreach (TcpClient endPoint in targetClient)
             {
                 try
                 {
@@ -61,7 +60,6 @@ namespace MyMq
                     {
                         if (stream.CanWrite)
                         {
-
                             new NetPacketTcpAsynService(stream).SendMessage(packet);
                         }
                         else
@@ -139,10 +137,11 @@ namespace MyMq
         {
             _thread = new Thread(ExecuteThread);
             _thread.IsBackground = true;
+            _shouldStop = false;
             _thread.Start();
         }
         #endregion
-        
+
         #region 停止服务
         /// <summary>
         /// 停止服务
@@ -150,10 +149,20 @@ namespace MyMq
         public void Stop()
         {
             _shouldStop = true;
+            SendStopCommand();
             lock (_lockObject)
             {
                 this._queueMessage.Clear();
             }
+        }
+        /// <summary>
+        /// 向订阅者发送服务停止命令
+        /// </summary>
+        private void SendStopCommand()
+        {
+            NetPacket packet = new NetPacket();
+            packet.Command = new ServerClosed();
+            SendMessage(packet, TcpClientFilter.GetAllConnectedTcpClient());
         }
         #endregion
     }

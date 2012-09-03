@@ -22,6 +22,7 @@ namespace MyMq
     {
         UnSubscribe,
         Subscribe,
-        Publish
+        Publish,
+        ServerClosed
     }
 }

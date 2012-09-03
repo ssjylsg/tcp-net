@@ -11,16 +11,13 @@ namespace PubSubServer
             HostPublishSubscribeServices();
         }
 
-        private IService _producterService; // 发布服务
-        private IService _subscriberService; // 订阅服务
+        private PubSubService _producterService;
+
         private void HostPublishSubscribeServices()
         {
-            PublishTcpService.ReceiveMessageEventHandler += new ReceiveMessageEventHandler(ProducerTcpService_ReceiveMessageEventHandler);
-            _producterService = new PublishTcpService();
-
-            _producterService.StartService();
-            _subscriberService = new TcpSubscribersService();
-            _subscriberService.StartService();
+            _producterService = new PubSubService();
+            _producterService.InitTcpService();
+            _producterService.TestForPublish(ProducerTcpService_ReceiveMessageEventHandler);
 
         }
 
@@ -50,6 +47,20 @@ namespace PubSubServer
         {
             this._messageCount = 1;
             this.richTextBox1.Clear();
+        }
+
+        private void startBtn_Click(object sender, System.EventArgs e)
+        {
+            _producterService.Start();
+            this.startBtn.Enabled = false;
+            this.stopBtn.Enabled = true;
+        }
+
+        private void stopBtn_Click(object sender, System.EventArgs e)
+        {
+            _producterService.Stop();
+            this.startBtn.Enabled = true;
+            this.stopBtn.Enabled = false;
         }
     }
 }

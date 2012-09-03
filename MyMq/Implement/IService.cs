@@ -3,7 +3,7 @@
     /// <summary>
     /// 服务接口
     /// </summary>
-    public interface IService
+    internal interface IService
     {
         /// <summary>
         /// 启动服务

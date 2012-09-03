@@ -20,8 +20,9 @@ namespace SocketSubscriber
         private IPublish _publish;
         private string serverIP;
         private int serverPort;
-        private IService _producterService;
-        private IService _subscriberService;
+        //private IService _producterService;
+        //private IService _subscriberService;
+        private PubSubService _service;
         public delegate void AddToTextBoxDelegate(string message);
         private Timer _timer;
         private System.Diagnostics.Stopwatch _stopWach;
@@ -30,6 +31,7 @@ namespace SocketSubscriber
         #endregion
         public SubscriberForm()
         {
+            _service = new PubSubService();
             InitializeComponent();
             serverIP = ConfigurationSettings.AppSettings["ServerIP"];
             txtTopicName.Text = "Bangladesh";
@@ -48,13 +50,17 @@ namespace SocketSubscriber
             {
                 this._subscriber.UnSubscribe(this.txtTopicName.Text);
             }
-            if (this._producterService != null)
+            //if (this._producterService != null)
+            //{
+            //    this._producterService.Stop();
+            //}
+            //if (this._subscriberService != null)
+            //{
+            //    this._subscriberService.Stop();
+            //}
+            if (_service != null)
             {
-                this._producterService.Stop();
-            }
-            if (this._subscriberService != null)
-            {
-                this._subscriberService.Stop();
+                _service.Stop();
             }
         }
         #endregion
@@ -64,10 +70,12 @@ namespace SocketSubscriber
         {
             if (this.isServiceCkb.Checked)
             {
-                _producterService = new ProducerSocketService();
-                _producterService.StartService();
-                _subscriberService = new SocketSubscriberService();
-                _subscriberService.StartService();
+                //_producterService = new ProducerSocketService();
+                //_producterService.StartService();
+                //_subscriberService = new SocketSubscriberService();
+                //_subscriberService.StartService();
+                _service.InitSocketService();
+                _service.Start();
             }
             serverPort = Convert.ToInt32(ConfigurationSettings.AppSettings["ServerPort"]);
             _subscriber = new MyMq.SocketSubscriber(serverIP, serverPort, new TimeSpan(0, 0, 0, 0, 50));
@@ -111,10 +119,8 @@ namespace SocketSubscriber
         {
             if (this.isServiceCkb.Checked)
             {
-                _producterService = new PublishTcpService();
-                _producterService.StartService();
-                _subscriberService = new TcpSubscribersService();
-                _subscriberService.StartService();
+                _service.InitTcpService();
+                _service.Start();
             }
 
             serverPort = Convert.ToInt32(ConfigurationSettings.AppSettings["ServerPort"]);
@@ -366,6 +372,7 @@ namespace SocketSubscriber
             {
                 this.InitTcp();
             }
+           // _service.Start();
             // 注册事件
             _subscriber.ReceiveMessage += new ReceiveMessageEventHandler(_subscriber_OnReceiveMessageEventHandler);
             _subscriber.ReceiveMessageError += new ReceiveErrorHandler(_subscriber_OnReceiveErrorHandler);
