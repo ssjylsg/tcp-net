@@ -9,7 +9,7 @@ namespace MyMq
     /// <summary>
     /// 订阅者
     /// </summary>
-    public class SocketSubscriber : ISubscribers
+    internal class SocketSubscriber : ISubscribers
     {
         private Socket _client;
         private EndPoint _remoteEndPoint;
@@ -23,6 +23,7 @@ namespace MyMq
         public event ReceiveMessageEventHandler ReceiveMessage;
 
         public event ReceiveErrorHandler ReceiveMessageError;
+        public event EventHandler ServerClosed;
 
         /// <summary>
         /// 事件处理

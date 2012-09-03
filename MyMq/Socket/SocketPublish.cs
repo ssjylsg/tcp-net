@@ -6,7 +6,7 @@ namespace MyMq
     /// <summary>
     /// 消息生产者
     /// </summary>
-    public class SocketPublish : IPublish
+    internal class SocketPublish : IPublish
     {
         private Socket _client;
         private EndPoint _remoteEndPoint;
